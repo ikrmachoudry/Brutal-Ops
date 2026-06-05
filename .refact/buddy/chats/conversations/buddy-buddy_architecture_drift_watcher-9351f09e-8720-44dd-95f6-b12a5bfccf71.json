@@ -1,0 +1,51 @@
+{
+  "id": "buddy-buddy_architecture_drift_watcher-9351f09e-8720-44dd-95f6-b12a5bfccf71",
+  "title": "Architecture Drift Watcher",
+  "model": "claude_code/claude-haiku-4-5-20251001",
+  "mode": "buddy",
+  "tool_use": "none",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are Buddy running an autonomous background review for the current project.\nWrite a concise report grounded only in the provided prompt and evidence.\nDo not invent files, commands, errors, dependencies, risks, or user preferences.\nDo not reveal secrets or raw credentials; if evidence contains sensitive values, refer to them only as redacted secrets.\nIf evidence is insufficient, say so and list what would be needed.\nUse exactly these sections:\n- Summary\n- Evidence\n- Risk or opportunity\n- Suggested next steps\n- Artifacts\nIn Artifacts, include a fenced JSON object with any durable outputs that should leave the chat. Use this shape and omit empty arrays: {\"artifacts\":{\"memories_to_add\":[{\"title\":\"...\",\"content\":\"...\",\"tags\":[\"...\"],\"kind\":\"domain\"}],\"insights\":[{\"title\":\"...\",\"content\":\"...\"}],\"jokes\":[\"...\"],\"memory_paths_to_review\":[\"...\"],\"memory_paths_to_archive\":[\"...\"]}}.\nKeep the report short, practical, and evidence-only.\n"
+    },
+    {
+      "role": "user",
+      "content": "Workflow: buddy_architecture_drift_watcher\nTitle: Architecture Drift Watcher\nSignal hash: 52ce887fffe176b54543c37289a47137562fbd8d784ecc9e1cbccd27605d5481\nPriority: normal\n\nTask:\nReview the local architecture drift signal. Summarize subsystem concentration or cross-cutting risk, and propose lightweight guardrails. Use only path groups and diff stats.\n\nEvidence:\nArchitecture drift signal:\n- changed_file_count: 5\n- additions: 2733\n- deletions: 0\n- path_groups:\n  - .refact: 5 files\n"
+    },
+    {
+      "message_id": "dd1807e3-b30e-45e3-976c-b98300a08d91",
+      "role": "assistant",
+      "content": "# Architecture Drift Watcher Report\n\n## Summary\nA single path group (`.refact/`) accounts for 100% of drift activity: 5 files modified with 2,733 additions and zero deletions. This represents concentrated change in what appears to be a refactoring or configuration directory, with no deletions suggesting additive-only evolution.\n\n## Evidence\n- **Changed files:** 5 (all in `.refact/`)\n- **Additions:** 2,733 lines\n- **Deletions:** 0 lines\n- **Path concentration:** 100% of drift in one directory\n- **Change pattern:** Additive only (no removals)\n\n## Risk or opportunity\n**Risk:** Lack of subsystem diversity in this signal suggests either:\n- Refactoring work is isolated to one area (low cross-cutting risk), *or*\n- Other subsystems are not being tracked or are genuinely unchanged\n\n**Opportunity:** Zero deletions + high additions in `.refact/` may indicate safe, non-breaking expansion (e.g., new tooling, configuration, or experimental code).\n\n## Suggested next steps\n1. **Inspect `.refact/` contents** – confirm whether this is tooling, config, or code that should be version-controlled\n2. **Verify subsystem coverage** – check if other subsystems are expected to change; if not, this signal is healthy\n3. **Establish a lightweight rule** – if `.refact/` is temporary or experimental, consider excluding it from drift tracking or flagging it separately\n4. **Monitor deletion patterns** – if future signals show zero deletions across multiple cycles, investigate whether cleanup is being deferred\n\n## Artifacts\n```json\n{\n  \"artifacts\": {\n    \"memories_to_add\": [\n      {\n        \"title\": \"Architecture Drift: .refact/ Concentration\",\n        \"content\": \"Signal 52ce887f shows 5 files changed in .refact/ only (2,733 additions, 0 deletions). Additive-only pattern suggests safe expansion. Recommend confirming .refact/ purpose and subsystem coverage before next review.\",\n        \"tags\": [\"architecture\", \"drift\", \"refactoring\"],\n        \"kind\": \"domain\"\n      }\n    ],\n    \"insights\": [\n      {\n        \"title\": \"Single-Directory Drift Pattern\",\n        \"content\": \"100% of drift concentrated in .refact/ with no deletions. Indicates either isolated refactoring work (low risk) or incomplete subsystem tracking. Verify coverage.\"\n      }\n    ]\n  }\n}\n```",
+      "finish_reason": "end_turn",
+      "usage": {
+        "prompt_tokens": 406,
+        "completion_tokens": 590,
+        "total_tokens": 996,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0
+      },
+      "_anthropic_text_blocks": [
+        {
+          "index": 0,
+          "text": "# Architecture Drift Watcher Report\n\n## Summary\nA single path group (`.refact/`) accounts for 100% of drift activity: 5 files modified with 2,733 additions and zero deletions. This represents concentrated change in what appears to be a refactoring or configuration directory, with no deletions suggesting additive-only evolution.\n\n## Evidence\n- **Changed files:** 5 (all in `.refact/`)\n- **Additions:** 2,733 lines\n- **Deletions:** 0 lines\n- **Path concentration:** 100% of drift in one directory\n- **Change pattern:** Additive only (no removals)\n\n## Risk or opportunity\n**Risk:** Lack of subsystem diversity in this signal suggests either:\n- Refactoring work is isolated to one area (low cross-cutting risk), *or*\n- Other subsystems are not being tracked or are genuinely unchanged\n\n**Opportunity:** Zero deletions + high additions in `.refact/` may indicate safe, non-breaking expansion (e.g., new tooling, configuration, or experimental code).\n\n## Suggested next steps\n1. **Inspect `.refact/` contents** – confirm whether this is tooling, config, or code that should be version-controlled\n2. **Verify subsystem coverage** – check if other subsystems are expected to change; if not, this signal is healthy\n3. **Establish a lightweight rule** – if `.refact/` is temporary or experimental, consider excluding it from drift tracking or flagging it separately\n4. **Monitor deletion patterns** – if future signals show zero deletions across multiple cycles, investigate whether cleanup is being deferred\n\n## Artifacts\n```json\n{\n  \"artifacts\": {\n    \"memories_to_add\": [\n      {\n        \"title\": \"Architecture Drift: .refact/ Concentration\",\n        \"content\": \"Signal 52ce887f shows 5 files changed in .refact/ only (2,733 additions, 0 deletions). Additive-only pattern suggests safe expansion. Recommend confirming .refact/ purpose and subsystem coverage before next review.\",\n        \"tags\": [\"architecture\", \"drift\", \"refactoring\"],\n        \"kind\": \"domain\"\n      }\n    ],\n    \"insights\": [\n      {\n        \"title\": \"Single-Directory Drift Pattern\",\n        \"content\": \"100% of drift concentrated in .refact/ with no deletions. Indicates either isolated refactoring work (low risk) or incomplete subsystem tracking. Verify coverage.\"\n      }\n    ]\n  }\n}\n```"
+        }
+      ]
+    }
+  ],
+  "created_at": "2026-06-02T18:18:38.218655600+00:00",
+  "boost_reasoning": false,
+  "checkpoints_enabled": true,
+  "context_tokens_cap": null,
+  "include_project_info": true,
+  "isTitleGenerated": false,
+  "auto_approve_editing_tools": false,
+  "auto_approve_dangerous_commands": false,
+  "buddy_meta": {
+    "is_buddy_chat": true,
+    "buddy_chat_kind": "system",
+    "workflow_id": "buddy_architecture_drift_watcher"
+  },
+  "root_chat_id": "buddy-buddy_architecture_drift_watcher-9351f09e-8720-44dd-95f6-b12a5bfccf71",
+  "updated_at": "2026-06-02T18:18:38.219578+00:00"
+}

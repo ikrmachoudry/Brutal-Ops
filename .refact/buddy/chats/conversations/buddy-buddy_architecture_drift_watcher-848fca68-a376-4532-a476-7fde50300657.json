@@ -1,0 +1,51 @@
+{
+  "id": "buddy-buddy_architecture_drift_watcher-848fca68-a376-4532-a476-7fde50300657",
+  "title": "Architecture Drift Watcher",
+  "model": "claude_code/claude-haiku-4-5-20251001",
+  "mode": "buddy",
+  "tool_use": "none",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are Buddy running an autonomous background review for the current project.\nWrite a concise report grounded only in the provided prompt and evidence.\nDo not invent files, commands, errors, dependencies, risks, or user preferences.\nDo not reveal secrets or raw credentials; if evidence contains sensitive values, refer to them only as redacted secrets.\nIf evidence is insufficient, say so and list what would be needed.\nUse exactly these sections:\n- Summary\n- Evidence\n- Risk or opportunity\n- Suggested next steps\n- Artifacts\nIn Artifacts, include a fenced JSON object with any durable outputs that should leave the chat. Use this shape and omit empty arrays: {\"artifacts\":{\"memories_to_add\":[{\"title\":\"...\",\"content\":\"...\",\"tags\":[\"...\"],\"kind\":\"domain\"}],\"insights\":[{\"title\":\"...\",\"content\":\"...\"}],\"jokes\":[\"...\"],\"memory_paths_to_review\":[\"...\"],\"memory_paths_to_archive\":[\"...\"]}}.\nKeep the report short, practical, and evidence-only.\n"
+    },
+    {
+      "role": "user",
+      "content": "Workflow: buddy_architecture_drift_watcher\nTitle: Architecture Drift Watcher\nSignal hash: ec11325491b5563c7d6caaa5f06f17d667dc0045a18d136fad27c534a9d6274b\nPriority: normal\n\nTask:\nReview the local architecture drift signal. Summarize subsystem concentration or cross-cutting risk, and propose lightweight guardrails. Use only path groups and diff stats.\n\nEvidence:\nArchitecture drift signal:\n- changed_file_count: 5\n- additions: 3141\n- deletions: 0\n- path_groups:\n  - .refact: 5 files\n"
+    },
+    {
+      "message_id": "3dc8cead-12d5-48f4-a3eb-ebf16011260b",
+      "role": "assistant",
+      "content": "# Architecture Drift Watcher Report\n\n## Summary\nA localized drift signal affecting 5 files in the `.refact` directory with 3,141 additions and no deletions. The concentration in a single path group suggests isolated tooling or configuration changes rather than systemic architectural drift.\n\n## Evidence\n- **Changed files:** 5 (all in `.refact`)\n- **Net additions:** 3,141 lines\n- **Deletions:** 0\n- **Path concentration:** 100% in `.refact` (single path group)\n- **Signal hash:** ec11325491b5563c7d6caaa5f06f17d667dc0045a18d136fad27c534a9d6274b\n\n## Risk or opportunity\n**Low cross-cutting risk.** The `.refact` directory isolation suggests:\n- Likely refactoring metadata, IDE config, or tool-specific artifacts\n- No evidence of changes spreading across core subsystems\n- Opportunity: if `.refact` is auto-generated or ephemeral, consider whether it should be version-controlled\n\n## Suggested next steps\n1. Confirm `.refact` purpose (IDE config, build artifacts, or intentional refactoring state)\n2. If auto-generated, add to `.gitignore` to prevent future drift signals\n3. If intentional, document the 3,141-line addition in commit message for future reviewers\n\n## Artifacts\n```json\n{\n  \"artifacts\": {\n    \"memories_to_add\": [\n      {\n        \"title\": \"Architecture Drift: .refact Concentration\",\n        \"content\": \"Signal ec11325491b5563c7d6caaa5f06f17d667dc0045a18d136fad27c534a9d6274b shows 5 files changed in .refact with 3,141 additions. Single path group concentration suggests isolated tooling change, not systemic drift. Recommend confirming if .refact should be version-controlled.\",\n        \"tags\": [\"architecture\", \"drift\", \"refact\", \"low-risk\"],\n        \"kind\": \"domain\"\n      }\n    ]\n  }\n}\n```",
+      "finish_reason": "end_turn",
+      "usage": {
+        "prompt_tokens": 409,
+        "completion_tokens": 497,
+        "total_tokens": 906,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0
+      },
+      "_anthropic_text_blocks": [
+        {
+          "index": 0,
+          "text": "# Architecture Drift Watcher Report\n\n## Summary\nA localized drift signal affecting 5 files in the `.refact` directory with 3,141 additions and no deletions. The concentration in a single path group suggests isolated tooling or configuration changes rather than systemic architectural drift.\n\n## Evidence\n- **Changed files:** 5 (all in `.refact`)\n- **Net additions:** 3,141 lines\n- **Deletions:** 0\n- **Path concentration:** 100% in `.refact` (single path group)\n- **Signal hash:** ec11325491b5563c7d6caaa5f06f17d667dc0045a18d136fad27c534a9d6274b\n\n## Risk or opportunity\n**Low cross-cutting risk.** The `.refact` directory isolation suggests:\n- Likely refactoring metadata, IDE config, or tool-specific artifacts\n- No evidence of changes spreading across core subsystems\n- Opportunity: if `.refact` is auto-generated or ephemeral, consider whether it should be version-controlled\n\n## Suggested next steps\n1. Confirm `.refact` purpose (IDE config, build artifacts, or intentional refactoring state)\n2. If auto-generated, add to `.gitignore` to prevent future drift signals\n3. If intentional, document the 3,141-line addition in commit message for future reviewers\n\n## Artifacts\n```json\n{\n  \"artifacts\": {\n    \"memories_to_add\": [\n      {\n        \"title\": \"Architecture Drift: .refact Concentration\",\n        \"content\": \"Signal ec11325491b5563c7d6caaa5f06f17d667dc0045a18d136fad27c534a9d6274b shows 5 files changed in .refact with 3,141 additions. Single path group concentration suggests isolated tooling change, not systemic drift. Recommend confirming if .refact should be version-controlled.\",\n        \"tags\": [\"architecture\", \"drift\", \"refact\", \"low-risk\"],\n        \"kind\": \"domain\"\n      }\n    ]\n  }\n}\n```"
+        }
+      ]
+    }
+  ],
+  "created_at": "2026-06-03T09:22:30.292171500+00:00",
+  "boost_reasoning": false,
+  "checkpoints_enabled": true,
+  "context_tokens_cap": null,
+  "include_project_info": true,
+  "isTitleGenerated": false,
+  "auto_approve_editing_tools": false,
+  "auto_approve_dangerous_commands": false,
+  "buddy_meta": {
+    "is_buddy_chat": true,
+    "buddy_chat_kind": "system",
+    "workflow_id": "buddy_architecture_drift_watcher"
+  },
+  "root_chat_id": "buddy-buddy_architecture_drift_watcher-848fca68-a376-4532-a476-7fde50300657",
+  "updated_at": "2026-06-03T09:22:30.292851500+00:00"
+}

@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<title>Brutal Ops</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#000;overflow:hidden;font-family:'Courier New',monospace;user-select:none;}
+#c{display:block;width:100vw;height:100vh;}
+#landscape-warn{display:none;position:fixed;inset:0;background:#000;z-index:999;align-items:center;justify-content:center;flex-direction:column;gap:16px;}
+#landscape-warn p{color:#ff2200;font-size:18px;letter-spacing:2px;text-align:center;}
+@media(pointer:coarse) and (orientation:portrait){
+  #landscape-warn{display:flex;}
+  #mob,#hud-hp,#hud-wpn,#mm,#kf,#xh,#sco,#scope-ring,#scope-cross-h,#scope-cross-v,#hint,#hf,#sk,#rl,#grc,#spbar,#ds,#sb,#lp{display:none!important;}
+}
+#hud-hp{position:fixed;top:12px;left:12px;display:flex;align-items:center;gap:8px;pointer-events:none;z-index:10;}
+#hp-icon{color:#ff4444;font-size:16px;}
+#hp-bg{width:200px;height:12px;background:rgba(0,0,0,0.75);border-radius:6px;overflow:hidden;border:1px solid rgba(255,255,255,0.2);}
+#hp-fill{height:100%;width:100%;background:linear-gradient(90deg,#22cc44,#44ff66);transition:width .3s,background .5s;}
+#hp-num{color:#fff;font-size:14px;font-weight:700;min-width:32px;}
+#hud-wpn{position:fixed;bottom:10px;right:10px;display:flex;flex-direction:column;align-items:flex-end;gap:2px;pointer-events:none;z-index:10;}
+#wpn-name{color:#fff;font-size:13px;font-weight:700;letter-spacing:2px;}
+#wpn-ammo{color:#aaa;font-size:11px;}
+#wpn-slots{display:flex;gap:3px;margin-top:4px;}
+.ws{width:38px;height:38px;background:rgba(0,0,0,0.7);border:1px solid #333;border-radius:2px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:6px;color:#444;letter-spacing:1px;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:rgba(255,140,0,0.3);}
+.ws.on{border-color:#ff8c00;color:#ff8c00;background:rgba(255,140,0,0.2);}
+.ws.have{border-color:#556;color:#888;}
+.ws .sn{font-size:9px;font-weight:700;margin-bottom:1px;}
+@media(pointer:coarse){.ws{width:46px;height:46px;font-size:7px;}.ws .sn{font-size:11px;}#wpn-slots{gap:4px;}}
+#mm{position:fixed;top:12px;right:12px;border:1px solid rgba(255,255,255,0.2);border-radius:2px;z-index:10;}
+#kf{position:fixed;top:12px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:4px;pointer-events:none;z-index:10;min-width:300px;}
+.kfe{background:rgba(0,0,0,0.85);padding:5px 14px;font-size:11px;color:#fff;border-left:3px solid #ff2200;animation:kfout 3s forwards;text-align:center;border-radius:2px;white-space:nowrap;}
+@keyframes kfout{0%{opacity:1}80%{opacity:1}100%{opacity:0;transform:translateY(-8px)}}
+#hf{position:fixed;inset:0;pointer-events:none;z-index:9;border:0px solid rgba(255,0,0,0);background:transparent;transition:border .08s,background .08s;}
+#hf.on{border-width:10px;border-color:rgba(255,0,0,0.75);background:rgba(180,0,0,0.06);}
+#xh{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:10;}
+#xh::before,#xh::after{content:'';position:absolute;background:rgba(255,255,255,0.9);}
+#xh::before{width:2px;height:14px;top:-7px;left:-1px;}
+#xh::after{width:14px;height:2px;top:-1px;left:-7px;}
+#bullet-count{position:fixed;bottom:58px;left:50%;transform:translateX(-50%);
+  color:rgba(255,255,255,0.9);font-size:13px;font-weight:700;letter-spacing:3px;
+  text-shadow:0 0 8px rgba(0,0,0,0.9),0 0 4px rgba(0,0,0,1);
+  pointer-events:none;z-index:10;font-family:'Courier New',monospace;}
+@media(pointer:coarse){#bullet-count{display:none;}}
+#sco{position:fixed;inset:0;pointer-events:none;z-index:8;display:none;}
+#sco.on{display:block;}
+#sco.on::before{content:'';position:fixed;inset:0;background:radial-gradient(circle 120px at 50% 50%,transparent 118px,rgba(0,0,0,0.55) 130px,rgba(0,0,0,0.72) 200px);pointer-events:none;}
+#scope-ring{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:240px;height:240px;border-radius:50%;border:2px solid rgba(255,255,255,0.9);pointer-events:none;z-index:9;display:none;}
+#scope-ring.on{display:block;}
+#scope-cross-h{position:fixed;top:50%;left:0;width:100%;height:1px;background:rgba(255,255,255,0.85);pointer-events:none;z-index:10;display:none;transform:translateY(-50%);}
+#scope-cross-v{position:fixed;top:0;left:50%;width:1px;height:100%;background:rgba(255,255,255,0.85);pointer-events:none;z-index:10;display:none;transform:translateX(-50%);}
+#scope-gap{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:20px;height:20px;background:#000;pointer-events:none;z-index:11;display:none;border-radius:50%;}
+#scope-dot{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:4px;height:4px;background:#ff2200;border-radius:50%;pointer-events:none;z-index:12;display:none;}
+#scope-ring.on~#scope-cross-h,#scope-ring.on~#scope-cross-v,#scope-ring.on~#scope-gap,#scope-ring.on~#scope-dot{display:block;}
+#hint{position:fixed;top:56%;left:50%;transform:translateX(-50%);color:#fff;font-size:10px;letter-spacing:2px;background:rgba(0,0,0,0.75);padding:4px 12px;border:1px solid #555;display:none;pointer-events:none;z-index:10;}
+#rl{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);color:#ffaa00;font-size:11px;letter-spacing:3px;display:none;pointer-events:none;z-index:10;}
+#sk{position:fixed;top:35%;left:50%;transform:translateX(-50%);font-size:26px;font-weight:700;color:#ffaa00;letter-spacing:4px;pointer-events:none;z-index:20;opacity:0;transition:opacity .3s;}
+#grc{position:fixed;bottom:90px;right:10px;color:#88dd00;font-size:10px;pointer-events:none;z-index:10;}
+#spbar{position:fixed;bottom:48px;left:50%;transform:translateX(-50%);width:80px;height:3px;background:#222;border-radius:2px;pointer-events:none;z-index:10;}
+#spfill{height:100%;background:#44aaff;border-radius:2px;}
+#ds{position:fixed;inset:0;background:rgba(160,0,0,0.3);display:none;align-items:center;justify-content:center;flex-direction:column;z-index:15;pointer-events:none;}
+#ds.on{display:flex;}
+#ds h1{color:#ff2200;font-size:40px;letter-spacing:6px;}
+#ds p{color:#aaa;margin-top:8px;font-size:11px;letter-spacing:2px;}
+#sb{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.96);border:1px solid #333;padding:20px;min-width:320px;display:none;z-index:20;}
+#sb h2{text-align:center;color:#ff2200;letter-spacing:4px;margin-bottom:12px;font-size:12px;}
+.sbr{display:grid;grid-template-columns:1fr 40px 56px 46px;padding:5px 0;border-bottom:1px solid #1a1a1a;font-size:11px;color:#ccc;}
+.sbr.hd{color:#555;font-size:9px;letter-spacing:1px;}
+#lp{position:fixed;inset:0;background:rgba(0,0,0,0.95);display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:30;gap:14px;}
+#lp h2{color:#ff2200;letter-spacing:4px;font-size:24px;}
+#lp p{color:#555;font-size:10px;letter-spacing:2px;}
+#lp button{padding:12px 40px;background:#ff2200;border:none;color:#fff;font-family:'Courier New',monospace;font-size:12px;letter-spacing:3px;cursor:pointer;border-radius:2px;min-height:48px;}
+/* ── MOBILE ── */
+#mob{display:none;position:fixed;inset:0;pointer-events:none;z-index:15;}
+@media(pointer:coarse) and (orientation:landscape){#mob{display:block;}}
+#jzone{position:absolute;left:0;bottom:0;width:42vw;height:60vh;pointer-events:all;}
+#jout{position:absolute;left:20px;bottom:20px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,0.06);border:2px solid rgba(255,255,255,0.18);}
+#jdot{position:absolute;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.25);top:50%;left:50%;transform:translate(-50%,-50%);}
+#lzone{position:absolute;right:0;top:0;width:58vw;height:100%;pointer-events:all;}
+.mbtn{position:absolute;border-radius:50%;display:flex;align-items:center;justify-content:center;pointer-events:all;font-weight:700;cursor:pointer;border:2px solid;-webkit-tap-highlight-color:transparent;font-family:'Courier New',monospace;user-select:none;touch-action:manipulation;}
+.btn-lbl{position:absolute;bottom:-16px;left:50%;transform:translateX(-50%);font-size:8px;letter-spacing:1px;color:rgba(255,255,255,0.55);white-space:nowrap;pointer-events:none;}
+#bfire{width:80px;height:80px;right:18px;bottom:55px;background:rgba(255,80,0,0.9);border-color:rgba(255,200,0,0.9);font-size:28px;}
+#bjump{width:52px;height:52px;right:32px;bottom:148px;background:rgba(60,60,60,0.8);border-color:rgba(200,200,200,0.5);color:#fff;font-size:22px;}
+#bcrouch{width:48px;height:48px;right:32px;bottom:8px;background:rgba(60,60,60,0.7);border-color:rgba(200,200,200,0.35);color:#fff;font-size:18px;}
+#breload{width:46px;height:46px;right:108px;bottom:32px;background:rgba(180,140,0,0.6);border-color:rgba(255,200,0,0.6);color:#ffcc44;font-size:19px;}
+#bnade{width:46px;height:46px;right:112px;bottom:86px;background:rgba(60,160,0,0.6);border-color:rgba(100,220,0,0.6);color:#aaee44;font-size:21px;}
+#bsprint{width:48px;height:48px;right:108px;bottom:140px;background:rgba(0,130,190,0.65);border-color:rgba(0,200,255,0.7);color:#44ddff;font-size:17px;}
+#bscope{width:42px;height:42px;right:164px;bottom:140px;background:rgba(160,90,0,0.65);border-color:rgba(255,150,0,0.7);color:#ffaa44;font-size:17px;}
+#bpoop{width:50px;height:50px;right:164px;bottom:55px;background:rgba(80,40,0,0.88);border-color:rgba(130,65,19,0.9);color:#fff;font-size:19px;display:none;}
+</style>
+</head>
+<body>
+<div id="landscape-warn"><p style="font-size:40px">&#x1F504;</p><p>ROTATE TO LANDSCAPE</p></div>
+<div id="lp"><h2>BRUTAL OPS</h2><p>CLICK TO ENTER BATTLEFIELD</p><button onclick="startGame()">⚔ JOIN GAME</button></div>
+<canvas id="c"></canvas>
+<canvas id="mm" width="120" height="120"></canvas>
+<div id="xh"></div>
+<div id="bullet-count"></div>
+<div id="sco"></div>
+<div id="scope-ring"></div>
+<div id="scope-cross-h"></div>
+<div id="scope-cross-v"></div>
+<div id="scope-gap"></div>
+<div id="scope-dot"></div>
+<div id="hint">[E] OPEN DOOR</div>
+<div id="hf"></div><div id="sk"></div>
+<div id="rl">RELOADING...</div>
+<div id="grc">GRENADES: 3</div>
+<div id="spbar"><div id="spfill" style="width:100%"></div></div>
+<div id="kf"></div>
+<div id="hud-hp">
+  <div id="hp-icon">&#x2665;</div>
+  <div><div id="hp-bg"><div id="hp-fill"></div></div></div>
+  <div id="hp-num">100</div>
+</div>
+<div id="hud-wpn">
+  <div id="wpn-name">CROWBAR</div><div id="wpn-ammo">MELEE</div>
+  <div id="wpn-slots">
+    <div class="ws on" id="ws0"><div class="sn">1</div>ROD</div>
+    <div class="ws" id="ws1"><div class="sn">2</div>PST</div>
+    <div class="ws" id="ws2"><div class="sn">3</div>SHG</div>
+    <div class="ws" id="ws3"><div class="sn">4</div>SMG</div>
+    <div class="ws" id="ws4"><div class="sn">5</div>RVL</div>
+    <div class="ws" id="ws5"><div class="sn">6</div>RPG</div>
+    <div class="ws" id="ws6"><div class="sn">7</div>SNP</div>
+    <div class="ws" id="ws7"><div class="sn">8</div>LZR</div>
+    <div class="ws" id="ws8"><div class="sn">9</div>FRT</div>
+    <div class="ws" id="ws9"><div class="sn">0</div>GHT</div>
+  </div>
+</div>
+<div id="ds"><h1>YOU DIED</h1><p id="dmsg">RESPAWNING...</p></div>
+<div id="sb">
+  <h2>SCOREBOARD — TAB</h2>
+  <div class="sbr hd"><span>PLAYER</span><span>K</span><span>DEATHS</span><span>RANK</span></div>
+  <div id="sbBody"></div>
+</div>
+<div id="mob">
+  <div id="jzone"><div id="jout"><div id="jdot"></div></div></div>
+  <div id="lzone"></div>
+  <div class="mbtn" id="bfire">&#x1F52B;</div>
+  <div class="mbtn" id="bjump">&#x2191;<span class="btn-lbl">JUMP</span></div>
+  <div class="mbtn" id="bcrouch">&#x2193;<span class="btn-lbl">DUCK</span></div>
+  <div class="mbtn" id="breload">&#x21BA;<span class="btn-lbl">RLD</span></div>
+  <div class="mbtn" id="bnade">&#x1F4A3;<span class="btn-lbl">NADE</span></div>
+  <div class="mbtn" id="bsprint">&#x26A1;<span class="btn-lbl">RUN</span></div>
+  <div class="mbtn" id="bscope">&#x1F52D;<span class="btn-lbl">SCOPE</span></div>
+  <div class="mbtn" id="bpoop">&#x1F4A9;<span class="btn-lbl">POOP</span></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
+<script src="js/maps/MapLoader.js"></script>
+<script src="js/maps/VillaMap.js"></script>
+<script src="js/core/Characters.js"></script>
+<script src="js/core/Audio.js"></script>
+<script src="js/core/HUD.js"></script>
+<script src="js/engine/Physics.js"></script>
+<script src="js/core/Network.js"></script>
+<script src="js/core/WeaponModels.js"></script>
+<script src="js/core/WeaponLogic.js"></script>
+<script src="js/mobile/Mobile.js"></script>
+<script src="js/core/Game.js"></script>
+
+<script>
+'use strict';
+var QP=new URLSearchParams(location.search);
+var PLAYER_NAME=QP.get('name')||'Soldier';
+var HOST_IP=QP.get('ip')||location.hostname;
+var HOST_PORT=QP.get('port')||'3000';
+var PLAYER_CHAR=QP.get('char')||'doctor';
+
+var WEAPONS=[
+  {id:'crowbar',  name:'ROD',      damage:40, rate:600,  ammoMax:-1, auto:false,spread:0,   pellets:1,zoom:false,reloadT:0,    melee:true, meleeRange:2.2},
+  {id:'pistol',   name:'PISTOL',   damage:20, rate:420,  ammoMax:10, auto:false,spread:.008,pellets:1,zoom:true,reloadT:1200, melee:false,defAmmo:{mag:10,reserve:40}},
+  {id:'shotgun',  name:'SHOTGUN',  damage:12, rate:900,  ammoMax:6,  auto:false,spread:.09, pellets:8,zoom:true,reloadT:2500, melee:false,defAmmo:{mag:6, reserve:24}},
+  {id:'smg',      name:'SMG',      damage:11, rate:65,   ammoMax:30, auto:true, spread:.016,pellets:1,zoom:true,reloadT:1800, melee:false,defAmmo:{mag:30,reserve:90}},
+  {id:'revolver', name:'REVOLVER', damage:55, rate:1000, ammoMax:6,  auto:false,spread:.003,pellets:1,zoom:true,reloadT:2200, melee:false,defAmmo:{mag:6, reserve:18}},
+  {id:'rpg',      name:'RPG',      damage:120,rate:2000, ammoMax:1,  auto:false,spread:.001,pellets:1,zoom:true,reloadT:3000, melee:false,defAmmo:{mag:1, reserve:3}},
+  {id:'sniper',   name:'SNIPER',   damage:85, rate:1800, ammoMax:5,  auto:false,spread:.001,pellets:1,zoom:true, reloadT:2200, melee:false,defAmmo:{mag:5, reserve:15}},
+  {id:'lasergun', name:'LASER',    damage:35, rate:300,  ammoMax:20, auto:true, spread:.002,pellets:1,zoom:true, reloadT:1500, melee:false,defAmmo:{mag:20,reserve:60}},
+  {id:'fartgun',  name:'FARTGUN',  damage:25, rate:800,  ammoMax:5,  auto:false,spread:0,   pellets:1,zoom:false,reloadT:2000, melee:false,defAmmo:{mag:5, reserve:15}},
+  {id:'ghostgun', name:'GHOSTGUN', damage:20, rate:2000, ammoMax:3,  auto:false,spread:0,   pellets:1,zoom:false,reloadT:3000, melee:false,defAmmo:{mag:3, reserve:6}},
+];
+
+var myId=null,hp=100,alive=true,kills=0,grenades=3;
+var remotePlayers={},keys={};
+var yaw=0,pitch=0,shootCooldown=0,reloading=false;
+var zoomed=false,crouching=false;
+var colliders=[],dynCol=[];
+var doorMeshes={},doorStates={},doorTimers={};
+var pickupObjs={},inventory=new Set(['crowbar']),ammoStore={};
+WEAPONS.forEach(function(w){
+  ammoStore[w.id]=w.melee?{mag:-1,reserve:-1}:{mag:0,reserve:0};
+});
+var curWIdx=0,autoFireInt=null,activeGrenades=[],wallHitCooldown=0;
+var playerPos=new THREE.Vector3(5,1.7,5);
+
+// Fixed safe spawn zones — confirmed away from all villa walls
+var SPAWN_ZONES=[
+  [5,1.7,5],[18,1.7,8],[-18,1.7,-8],[28,1.7,-15],[-28,1.7,15],
+  [38,1.7,4],[-38,1.7,-4],[6,1.7,20],[-6,1.7,-20],[-44,1.7,0],[44,1.7,0]
+];
+
+// Weapon pickup zones — confirmed safe center positions, away from all walls
+var PDEFS=(function(){
+  var weps=['pistol','shotgun','smg','revolver','rpg','sniper','lasergun','fartgun','ghostgun','grenade'];
+  var fixed=[
+    {x:3,  z:2 }, {x:-3, z:2 }, {x:6,  z:-3}, {x:-6, z:-3},
+    {x:10, z:5 }, {x:-10,z:5 }, {x:4,  z:9 }, {x:-4, z:9 },
+    {x:8,  z:-8}, {x:-8, z:-8}
+  ];
+  return weps.map(function(w,i){
+    return{id:'pu_'+w, weapon:w, x:fixed[i].x, z:fixed[i].z};
+  });
+})();
+
+var scene=new THREE.Scene();
+scene.background=new THREE.Color(0x111115);
+scene.fog=new THREE.Fog(0x111115,45,110);
+var camera=new THREE.PerspectiveCamera(75,innerWidth/innerHeight,.05,200);
+var renderer=new THREE.WebGLRenderer({
+  canvas:document.getElementById('c'),
+  antialias:!('ontouchstart' in window), // disable antialias on mobile for performance
+  powerPreference:'high-performance'
+});
+renderer.setPixelRatio(('ontouchstart' in window)?Math.min(devicePixelRatio,1):Math.min(devicePixelRatio,2));
+renderer.setSize(innerWidth,innerHeight);
+renderer.shadowMap.enabled=!('ontouchstart' in window); // shadows off on mobile
+renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure=0.95;
+renderer.outputEncoding=THREE.sRGBEncoding;
+
+MapLoader.load('villa',scene,colliders,dynCol,doorMeshes,doorStates,doorTimers);
+camera.add(gunGrp);
+scene.add(camera);
+
+var _sp=SPAWN_ZONES[Math.floor(Math.random()*SPAWN_ZONES.length)];
+playerPos.set(_sp[0],_sp[1],_sp[2]);
+
+spawnPickups();
+updateHPBar();
+updateWpnHUD();
+
+// ── INPUT ─────────────────────────────────────────────────────
+document.addEventListener('mousemove',function(e){
+  if(!document.pointerLockElement)return;
+  var s=zoomed?.0007:.002;
+  yaw-=e.movementX*s;
+  pitch=Math.max(-1.3,Math.min(1.3,pitch-e.movementY*s));
+});
+
+document.addEventListener('mousedown',function(e){
+  // Request lock but NEVER block shooting — always fire regardless
+  if(!document.pointerLockElement) document.body.requestPointerLock();
+  if(e.button===0){
+    if(typeof doShoot==='function') doShoot();
+    if(typeof curW==='function'&&curW().auto)
+      autoFireInt=setInterval(function(){if(typeof doShoot==='function')doShoot();},curW().rate);
+  }
+  if(e.button===2){
+    e.preventDefault();
+    if(typeof curW==='function'&&curW().id==='fartgun'){
+      if(typeof spawnPoop==='function') spawnPoop(playerPos.clone());
+    }else{
+      if(typeof toggleZoom==='function') toggleZoom();
+    }
+  }
+});
+
+document.addEventListener('mouseup',function(e){
+  if(e.button===0&&typeof stopShooting==='function') stopShooting();
+});
+document.addEventListener('contextmenu',function(e){e.preventDefault();});
+
+document.addEventListener('keydown',function(e){
+  keys[e.code]=true;
+  if(e.code==='Tab'){
+    e.preventDefault();
+    var sb=document.getElementById('sb');if(sb)sb.style.display='block';
+  }
+  if(e.code==='Space'&&typeof physicsJump==='function') physicsJump();
+  if(e.code==='KeyR'&&typeof doReload==='function') doReload();
+  if(e.code==='KeyE'&&typeof tryInteract==='function') tryInteract();
+  if(e.code==='KeyG'&&typeof throwGren==='function') throwGren();
+  for(var i=0;i<9;i++)
+    if(e.code==='Digit'+(i+1)&&typeof switchTo==='function') switchTo(i);
+  if(e.code==='Digit0'&&typeof switchTo==='function') switchTo(9);
+});
+
+document.addEventListener('keyup',function(e){
+  keys[e.code]=false;
+  if(e.code==='Tab'){var sb=document.getElementById('sb');if(sb)sb.style.display='none';}
+});
+
+document.addEventListener('wheel',function(e){
+  if(!document.pointerLockElement||typeof switchTo==='undefined') return;
+  switchTo(e.deltaY>0?(curWIdx+1)%WEAPONS.length:(curWIdx-1+WEAPONS.length)%WEAPONS.length);
+});
+
+// Weapon slot tap (mobile)
+for(var _wi=0;_wi<10;_wi++){
+  (function(idx){
+    var sl=document.getElementById('ws'+idx);
+    if(sl) sl.addEventListener('touchstart',function(e){
+      e.preventDefault();
+      if(typeof switchTo==='function') switchTo(idx);
+    },{passive:false});
+  })(_wi);
+}
+
+document.getElementById('c').addEventListener('click',function(){
+  if(!document.pointerLockElement) document.body.requestPointerLock();
+});
+
+// ── GAME LOOP ──────────────────────────────────────────────────
+var last=performance.now(), sendTimer=0;
+function loop(){
+  requestAnimationFrame(loop);
+  var now=performance.now(), dt=Math.min((now-last)/1000,.05); last=now;
+
+  if(alive){
+    crouching=!!(keys['KeyC']||keys['ArrowDown'])||
+      (typeof getMobileCrouching==='function'&&getMobileCrouching());
+    var sprinting=!!(keys['ShiftLeft']||keys['ShiftRight'])||
+      (typeof getMobileSprinting==='function'&&getMobileSprinting());
+
+    var fwd=new THREE.Vector3(-Math.sin(yaw),0,-Math.cos(yaw));
+    var rgt=new THREE.Vector3(Math.cos(yaw),0,-Math.sin(yaw));
+    var inputDir=new THREE.Vector3();
+
+    if(typeof joy!=='undefined'&&joy.active){
+      if(Math.abs(joy.dy)>.08) inputDir.addScaledVector(fwd,-joy.dy);
+      if(Math.abs(joy.dx)>.08) inputDir.addScaledVector(rgt,joy.dx);
+    }
+    if(keys['KeyW']||keys['ArrowUp'])   inputDir.add(fwd);
+    if(keys['KeyS'])                    inputDir.sub(fwd);
+    if(keys['KeyA']||keys['ArrowLeft']) inputDir.sub(rgt);
+    if(keys['KeyD']||keys['ArrowRight'])inputDir.add(rgt);
+    if(inputDir.length()>.05) inputDir.normalize();
+
+    var phys=physicsUpdate(inputDir,crouching,sprinting,dt);
+    camera.position.copy(playerPos);
+    camera.rotation.order='YXZ';
+    camera.rotation.y=yaw;
+    camera.rotation.x=pitch;
+    gunGrp.position.set(phys.bobX,-0.2+phys.bobY,-0.26);
+    gunGrp.rotation.z=phys.moving?Math.sin(now*.004)*.01:0;
+
+    if(typeof updateCrowbarSwing==='function')  updateCrowbarSwing(dt);
+    if(typeof updateReloadAnim==='function')     updateReloadAnim(dt);
+    if(typeof updateBulletMarks==='function')    updateBulletMarks(dt);
+    if(typeof updateFartClouds==='function')     updateFartClouds(dt);
+    if(typeof updateGhosts==='function')         updateGhosts(dt);
+    if(typeof updatePoops==='function')          updatePoops(dt);
+
+    Object.values(pickupObjs).forEach(function(po){
+      if(po.available){
+        po.group.rotation.y+=dt*1.5;
+        po.group.position.y=.38+Math.sin(now*.002)*.1;
+      }
+    });
+
+    if(typeof updateRemotePlayers==='function') updateRemotePlayers(dt);
+    if(typeof tryPickup==='function')           tryPickup();
+    if(typeof updateHint==='function')          updateHint();
+    if(typeof updateGrenades==='function')      updateGrenades(dt);
+
+    sendTimer+=dt;
+    if(sendTimer>.05){if(typeof sendMove==='function') sendMove(); sendTimer=0;}
+  }
+
+  if(typeof drawMinimap==='function') drawMinimap();
+  renderer.render(scene,camera);
+}
+
+window.startGame=function(){
+  document.getElementById('lp').style.display='none';
+  if(!('ontouchstart' in window)){
+    var pl=document.body.requestPointerLock||document.body.mozRequestPointerLock;
+    if(pl) pl.call(document.body);
+  }
+  if(typeof initAudio==='function')  initAudio();
+  if(typeof initMobile==='function') initMobile();
+  if(typeof connectWS==='function')  connectWS();
+};
+
+window.addEventListener('resize',function(){
+  camera.aspect=innerWidth/innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth,innerHeight);
+});
+
+
+loop();
+</script>
+</body>
+</html>

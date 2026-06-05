@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<title>Brutal Ops — Choose Warrior</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Share+Tech+Mono&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--red:#ff2200;--orange:#ff6600;--gold:#ffcc00;--bg:#080810;--panel:#0e0e1a;--border:#1e1e2e;}
+html,body{
+  background:var(--bg);color:#fff;
+  font-family:'Share Tech Mono',monospace;
+  /* KEY FIX: allow scroll on mobile so button is reachable */
+  overflow-x:hidden;
+  overflow-y:auto;
+  min-height:100vh;
+}
+body{
+  display:flex;flex-direction:column;align-items:center;
+  /* padding bottom so button never hides behind phone nav bar */
+  padding:12px 8px 40px;
+}
+/* Scanlines */
+body::before{content:'';position:fixed;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.07) 2px,rgba(0,0,0,0.07) 4px);
+  pointer-events:none;z-index:100;}
+body::after{content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,0.65) 100%);
+  pointer-events:none;z-index:99;}
+
+.header{text-align:center;margin-bottom:14px;width:100%;}
+.header h1{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(22px,6vw,52px);
+  letter-spacing:8px;color:var(--red);
+  text-shadow:0 0 30px rgba(255,34,0,0.6);
+  animation:flicker 4s infinite;
+}
+@keyframes flicker{0%,95%,100%{opacity:1;}96%{opacity:.85;}98%{opacity:.9;}}
+.header .sub{font-size:clamp(7px,2vw,10px);letter-spacing:3px;color:#444;margin-top:3px;}
+.header .player-info{font-size:clamp(8px,2vw,11px);color:#666;margin-top:6px;letter-spacing:2px;}
+.header .player-info span{color:var(--gold);}
+
+/* CARDS — 4 col desktop, 2 col tablet, 1 col tiny phone */
+#cards{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+  width:min(940px,100%);
+  position:relative;z-index:1;
+}
+@media(max-width:700px){#cards{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:380px){#cards{grid-template-columns:1fr;}}
+
+.card{
+  background:var(--panel);border:1px solid var(--border);border-radius:4px;
+  cursor:pointer;transition:border-color .2s,transform .15s,box-shadow .2s;
+  overflow:hidden;display:flex;flex-direction:column;align-items:center;
+  position:relative;
+  /* Make card tappable on mobile — bigger touch target */
+  -webkit-tap-highlight-color:rgba(255,102,0,0.2);
+}
+.card::before{content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,0.02) 0%,transparent 60%);pointer-events:none;}
+.card:hover{border-color:var(--orange);
+  box-shadow:0 0 20px rgba(255,102,0,0.2);transform:translateY(-3px);}
+.card.selected{border-color:var(--gold);
+  box-shadow:0 0 28px rgba(255,204,0,0.3);transform:translateY(-4px);}
+.card.selected::after{
+  content:'✔ SELECTED';position:absolute;top:6px;right:6px;
+  background:var(--gold);color:#000;font-size:7px;font-weight:700;
+  letter-spacing:2px;padding:2px 5px;border-radius:2px;}
+/* Canvas fills card width */
+.card canvas{width:100%!important;height:auto!important;display:block;}
+.card-name{font-family:'Bebas Neue',sans-serif;font-size:clamp(14px,3vw,18px);
+  letter-spacing:3px;color:#eee;padding:5px 0 1px;}
+.card-class{font-size:clamp(7px,1.8vw,9px);color:var(--red);letter-spacing:2px;margin-bottom:2px;}
+.card-desc{font-size:clamp(6px,1.5vw,8px);color:#555;letter-spacing:1px;
+  padding-bottom:8px;text-align:center;padding-inline:6px;line-height:1.5;}
+.card-stats{display:flex;gap:5px;padding-bottom:8px;}
+.stat{display:flex;flex-direction:column;align-items:center;gap:2px;}
+.stat-label{font-size:7px;color:#444;letter-spacing:1px;}
+.stat-bar{width:28px;height:3px;background:#111;border-radius:1px;overflow:hidden;}
+.stat-fill{height:100%;border-radius:1px;}
+@media(max-width:500px){.card-stats{display:none;}}
+
+/* ENTER BUTTON — always visible, sticky-ish at bottom */
+#btn-wrap{
+  width:min(940px,100%);
+  display:flex;justify-content:center;
+  margin-top:16px;
+  position:relative;z-index:1;
+  /* extra bottom padding for iPhone home bar */
+  padding-bottom:env(safe-area-inset-bottom,12px);
+}
+#btn{
+  padding:clamp(10px,2vw,14px) clamp(30px,8vw,60px);
+  background:transparent;border:2px solid #333;color:#333;
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(14px,3vw,18px);letter-spacing:5px;
+  cursor:not-allowed;border-radius:2px;transition:all .3s;
+  position:relative;overflow:hidden;
+  /* Large touch target on mobile */
+  min-width:200px;min-height:48px;
+}
+#btn.active{border-color:var(--red);color:#fff;cursor:pointer;
+  box-shadow:0 0 20px rgba(255,34,0,0.3);}
+#btn.active::before{content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,rgba(255,34,0,0.15),transparent);
+  transform:translateX(-100%);animation:sweep 2s infinite;}
+@keyframes sweep{to{transform:translateX(100%);}}
+#btn.active:hover,#btn.active:active{
+  background:var(--red);box-shadow:0 0 40px rgba(255,34,0,0.5);}
+
+.corner{position:fixed;width:32px;height:32px;}
+.corner.tl{top:12px;left:12px;border-top:2px solid #222;border-left:2px solid #222;}
+.corner.tr{top:12px;right:12px;border-top:2px solid #222;border-right:2px solid #222;}
+.corner.bl{bottom:12px;left:12px;border-bottom:2px solid #222;border-left:2px solid #222;}
+.corner.br{bottom:12px;right:12px;border-bottom:2px solid #222;border-right:2px solid #222;}
+</style>
+</head>
+<body>
+<div class="corner tl"></div><div class="corner tr"></div>
+<div class="corner bl"></div><div class="corner br"></div>
+
+<div class="header">
+  <h1>CHOOSE YOUR WARRIOR</h1>
+  <div class="sub">SELECT A CHARACTER TO ENTER THE BATTLEFIELD</div>
+  <div class="player-info" id="pinfo">LOADING...</div>
+</div>
+
+<div id="cards"></div>
+
+<!-- Button in its own wrapper OUTSIDE cards — always scrolled into view -->
+<div id="btn-wrap">
+  <button id="btn" disabled onclick="enterGame()">⚔ ENTER BATTLEFIELD</button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="js/core/Characters.js"></script>
+<script>
+'use strict';
+var QP = new URLSearchParams(location.search);
+var NAME = QP.get('name') || 'Soldier';
+var IP   = QP.get('ip')   || location.hostname;
+var PORT = QP.get('port') || '3000';
+var selectedChar = null;
+
+// Stubs needed by Characters.js
+var camera = {position:{x:0,y:0,z:0}};
+var PLAYER_CHAR = 'doctor';
+
+document.getElementById('pinfo').innerHTML =
+  'SOLDIER: <span>'+NAME+'</span> &nbsp;|&nbsp; SERVER: <span>'+IP+':'+PORT+'</span>';
+
+var CHARS = [
+  {id:'doctor',   name:'DR. VOSS',   cls:'FIELD MEDIC',
+   desc:'Brilliant. Precise. Will patch you up — or put you down.',
+   stats:{speed:80,armor:55,agility:85}},
+  {id:'guard',    name:'SGT. HAYES', cls:'SECURITY GUARD',
+   desc:'Tactical vest, steady nerves. Keeps order by force.',
+   stats:{speed:72,armor:85,agility:70}},
+  {id:'civilian', name:'RILEY',      cls:'CIVILIAN',
+   desc:'No training. No fear. Nothing left to lose.',
+   stats:{speed:88,armor:45,agility:90}},
+  {id:'military', name:'CPL. STARK', cls:'MILITARY POLICE',
+   desc:'Orders are orders. Violators will be terminated.',
+   stats:{speed:78,armor:78,agility:75}},
+];
+
+var renderers=[], scenes=[], cameras=[], meshGroups=[];
+var clock = new THREE.Clock();
+
+function statColor(v){ return v>=80?'#ff2200':v>=65?'#ff6600':'#ffcc00'; }
+
+function buildCard(c) {
+  var wrap = document.createElement('div');
+  wrap.className = 'card'; wrap.dataset.char = c.id;
+
+  // Canvas — size depends on screen width
+  var cvW = Math.min(200, Math.floor((window.innerWidth - 40) / 2) - 10);
+  var cvH = Math.round(cvW * 1.15);
+  var cv = document.createElement('canvas');
+  cv.width = cvW; cv.height = cvH;
+  wrap.appendChild(cv);
+
+  var nameEl = document.createElement('div');
+  nameEl.className = 'card-name'; nameEl.textContent = c.name; wrap.appendChild(nameEl);
+  var clsEl = document.createElement('div');
+  clsEl.className = 'card-class'; clsEl.textContent = c.cls; wrap.appendChild(clsEl);
+  var descEl = document.createElement('div');
+  descEl.className = 'card-desc'; descEl.textContent = c.desc; wrap.appendChild(descEl);
+
+  var statsEl = document.createElement('div'); statsEl.className = 'card-stats';
+  [['SPD',c.stats.speed],['ARM',c.stats.armor],['AGI',c.stats.agility]].forEach(function(s){
+    var st = document.createElement('div'); st.className = 'stat';
+    st.innerHTML = '<div class="stat-label">'+s[0]+'</div>'+
+      '<div class="stat-bar"><div class="stat-fill" style="width:'+s[1]+'%;background:'+statColor(s[1])+'"></div></div>';
+    statsEl.appendChild(st);
+  });
+  wrap.appendChild(statsEl);
+
+  // Three.js mini renderer
+  var renderer = new THREE.WebGLRenderer({canvas:cv, antialias:true, alpha:false});
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+  renderer.setSize(cvW, cvH);
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.2;
+
+  var sc = new THREE.Scene(); sc.background = new THREE.Color(0x08080f);
+  var charAccent = {doctor:0x44ffaa,guard:0xffaa44,civilian:0x44aaff,military:0xff4444};
+  var ac = charAccent[c.id] || 0x44aaff;
+
+  // Ground disc + glow ring
+  var gnd = new THREE.Mesh(new THREE.CircleGeometry(0.9,32),
+    new THREE.MeshStandardMaterial({color:0x111122,roughness:.9}));
+  gnd.rotation.x = -Math.PI/2; sc.add(gnd);
+  var ring = new THREE.Mesh(new THREE.RingGeometry(0.7,0.9,32),
+    new THREE.MeshBasicMaterial({color:ac,transparent:true,opacity:.3,side:THREE.DoubleSide}));
+  ring.rotation.x = -Math.PI/2; ring.position.y = .01; sc.add(ring);
+
+  var cam = new THREE.PerspectiveCamera(42, cvW/cvH, 0.1, 50);
+  cam.position.set(0, 1.1, 3.4); cam.lookAt(0, 1.0, 0);
+
+  sc.add(new THREE.AmbientLight(0x223355, 1.4));
+  var key = new THREE.DirectionalLight(0xfff8ee, 2.2); key.position.set(2,5,2); sc.add(key);
+  var fill = new THREE.DirectionalLight(0x4466aa, 0.8); fill.position.set(-3,2,-1); sc.add(fill);
+  var rim = new THREE.DirectionalLight(ac, 1.2); rim.position.set(0,3,-4); sc.add(rim);
+  sc.add(new THREE.PointLight(ac, 0.8, 4));
+
+  // Use Characters.js mkRemote for the actual in-game model
+  var group = mkRemote(c.name, c.id);
+  group.position.set(0, -0.2, 0);
+  sc.add(group);
+
+  renderers.push(renderer); scenes.push(sc); cameras.push(cam); meshGroups.push(group);
+
+  // Click / tap to select
+  wrap.addEventListener('click', function(){
+    document.querySelectorAll('.card').forEach(function(cd){cd.classList.remove('selected');});
+    wrap.classList.add('selected');
+    selectedChar = c.id;
+    var btn = document.getElementById('btn');
+    btn.classList.add('active');
+    btn.removeAttribute('disabled');
+    // Scroll button into view on mobile
+    document.getElementById('btn-wrap').scrollIntoView({behavior:'smooth', block:'nearest'});
+  });
+
+  document.getElementById('cards').appendChild(wrap);
+}
+
+CHARS.forEach(buildCard);
+
+// Animation loop
+function animate(){
+  requestAnimationFrame(animate);
+  var t = clock.getElapsedTime();
+  meshGroups.forEach(function(g, i){
+    if (!g) return;
+    g.rotation.y = t * 0.55 + i * 0.4;
+    g.position.y = -0.2 + Math.sin(t * 1.2 + i) * 0.015;
+  });
+  renderers.forEach(function(r, i){ r.render(scenes[i], cameras[i]); });
+}
+animate();
+
+function enterGame(){
+  if (!selectedChar) return;
+  window.location.href = 'game.html?name=' + encodeURIComponent(NAME) +
+    '&ip='   + encodeURIComponent(IP) +
+    '&port=' + encodeURIComponent(PORT) +
+    '&char=' + selectedChar;
+}
+</script>
+</body>
+</html>

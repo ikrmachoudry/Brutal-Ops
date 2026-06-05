@@ -1,0 +1,47 @@
+{
+  "id": "buddy-humor-c9180479-cf2c-4f7a-a971-aeaa9968c53d",
+  "title": "Humor for UncommittedPressure",
+  "model": "claude_code/claude-haiku-4-5-20251001",
+  "mode": "buddy",
+  "tool_use": "none",
+  "messages": [
+    {
+      "role": "user",
+      "content": "Generate 3 short, friendly, situational one-liners about: UncommittedPressure in a software project.\nReal state: tasks:0 stuck:0, traj:2, mem:4, mcp:0 failing:0, providers_ok:true. Keep each under 80 chars. No jargon. No fake events.\nOutput as a JSON array of 3 strings."
+    },
+    {
+      "message_id": "1823ad93-61f1-4576-9d91-d269d890ec0d",
+      "role": "assistant",
+      "content": "```json\n[\n  \"Two trajectories running smooth - let's keep this momentum going!\",\n  \"Memory's holding steady at 4, no blockers in sight today.\",\n  \"Everything's green and flowing - nice work keeping it stable!\"\n]\n```",
+      "finish_reason": "end_turn",
+      "usage": {
+        "prompt_tokens": 114,
+        "completion_tokens": 61,
+        "total_tokens": 175,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0
+      },
+      "_anthropic_text_blocks": [
+        {
+          "index": 0,
+          "text": "```json\n[\n  \"Two trajectories running smooth - let's keep this momentum going!\",\n  \"Memory's holding steady at 4, no blockers in sight today.\",\n  \"Everything's green and flowing - nice work keeping it stable!\"\n]\n```"
+        }
+      ]
+    }
+  ],
+  "created_at": "2026-06-04T22:03:54.877592500+00:00",
+  "boost_reasoning": false,
+  "checkpoints_enabled": true,
+  "context_tokens_cap": null,
+  "include_project_info": true,
+  "isTitleGenerated": false,
+  "auto_approve_editing_tools": false,
+  "auto_approve_dangerous_commands": false,
+  "buddy_meta": {
+    "is_buddy_chat": true,
+    "buddy_chat_kind": "system",
+    "workflow_id": "buddy_humor"
+  },
+  "root_chat_id": "buddy-humor-c9180479-cf2c-4f7a-a971-aeaa9968c53d",
+  "updated_at": "2026-06-04T22:03:54.878234300+00:00"
+}

@@ -1,0 +1,51 @@
+{
+  "id": "buddy-buddy_architecture_drift_watcher-b7ed3cec-8f57-4fdb-a6d1-b15107c098b6",
+  "title": "Architecture Drift Watcher",
+  "model": "claude_code/claude-haiku-4-5-20251001",
+  "mode": "buddy",
+  "tool_use": "none",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are Buddy running an autonomous background review for the current project.\nWrite a concise report grounded only in the provided prompt and evidence.\nDo not invent files, commands, errors, dependencies, risks, or user preferences.\nDo not reveal secrets or raw credentials; if evidence contains sensitive values, refer to them only as redacted secrets.\nIf evidence is insufficient, say so and list what would be needed.\nUse exactly these sections:\n- Summary\n- Evidence\n- Risk or opportunity\n- Suggested next steps\n- Artifacts\nIn Artifacts, include a fenced JSON object with any durable outputs that should leave the chat. Use this shape and omit empty arrays: {\"artifacts\":{\"memories_to_add\":[{\"title\":\"...\",\"content\":\"...\",\"tags\":[\"...\"],\"kind\":\"domain\"}],\"insights\":[{\"title\":\"...\",\"content\":\"...\"}],\"jokes\":[\"...\"],\"memory_paths_to_review\":[\"...\"],\"memory_paths_to_archive\":[\"...\"]}}.\nKeep the report short, practical, and evidence-only.\n"
+    },
+    {
+      "role": "user",
+      "content": "Workflow: buddy_architecture_drift_watcher\nTitle: Architecture Drift Watcher\nSignal hash: 6297c01f2c776a74c225329247b96c66af96f2af347fbec543f910cb5bec6967\nPriority: normal\n\nTask:\nReview the local architecture drift signal. Summarize subsystem concentration or cross-cutting risk, and propose lightweight guardrails. Use only path groups and diff stats.\n\nEvidence:\nArchitecture drift signal:\n- changed_file_count: 1\n- additions: 2835\n- deletions: 0\n- path_groups:\n  - .refact: 1 files\n"
+    },
+    {
+      "message_id": "6dbf5231-7031-482c-b3b3-b3f00c3a0580",
+      "role": "assistant",
+      "content": "# Architecture Drift Watcher Report\n\n## Summary\nA single file in the `.refact` directory has been modified with 2,835 lines added and no deletions. This represents a concentrated change in a single subsystem with no apparent cross-cutting impact.\n\n## Evidence\n- **Changed files:** 1 (minimal scope)\n- **Net additions:** 2,835 lines\n- **Net deletions:** 0 (additive only)\n- **Path group:** `.refact` (1 file)\n- **Concentration:** 100% of drift in one subsystem\n\n## Risk or opportunity\n**Low immediate risk.** The change is isolated to `.refact` and purely additive. However, the large line addition warrants verification:\n- Confirm the file is not a generated artifact or build output that should be excluded from drift tracking\n- Verify the addition aligns with intended `.refact` subsystem scope (likely refactoring or configuration)\n- No cross-cutting concerns detected\n\n## Suggested next steps\n1. **Verify file intent:** Confirm `.refact` file is tracked intentionally and not auto-generated\n2. **Review content:** Spot-check the 2,835 additions for unexpected dependencies or scope creep\n3. **Establish baseline:** If this is a new subsystem, document its purpose in architecture memory\n\n## Artifacts\n```json\n{\n  \"artifacts\": {\n    \"memories_to_add\": [\n      {\n        \"title\": \"Architecture Drift: .refact subsystem addition\",\n        \"content\": \"Single file in .refact modified with 2,835 lines added (no deletions). Isolated change; verify file intent and content alignment with subsystem scope.\",\n        \"tags\": [\"drift\", \"refact\", \"additive\"],\n        \"kind\": \"domain\"\n      }\n    ]\n  }\n}\n```",
+      "finish_reason": "end_turn",
+      "usage": {
+        "prompt_tokens": 407,
+        "completion_tokens": 423,
+        "total_tokens": 830,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0
+      },
+      "_anthropic_text_blocks": [
+        {
+          "index": 0,
+          "text": "# Architecture Drift Watcher Report\n\n## Summary\nA single file in the `.refact` directory has been modified with 2,835 lines added and no deletions. This represents a concentrated change in a single subsystem with no apparent cross-cutting impact.\n\n## Evidence\n- **Changed files:** 1 (minimal scope)\n- **Net additions:** 2,835 lines\n- **Net deletions:** 0 (additive only)\n- **Path group:** `.refact` (1 file)\n- **Concentration:** 100% of drift in one subsystem\n\n## Risk or opportunity\n**Low immediate risk.** The change is isolated to `.refact` and purely additive. However, the large line addition warrants verification:\n- Confirm the file is not a generated artifact or build output that should be excluded from drift tracking\n- Verify the addition aligns with intended `.refact` subsystem scope (likely refactoring or configuration)\n- No cross-cutting concerns detected\n\n## Suggested next steps\n1. **Verify file intent:** Confirm `.refact` file is tracked intentionally and not auto-generated\n2. **Review content:** Spot-check the 2,835 additions for unexpected dependencies or scope creep\n3. **Establish baseline:** If this is a new subsystem, document its purpose in architecture memory\n\n## Artifacts\n```json\n{\n  \"artifacts\": {\n    \"memories_to_add\": [\n      {\n        \"title\": \"Architecture Drift: .refact subsystem addition\",\n        \"content\": \"Single file in .refact modified with 2,835 lines added (no deletions). Isolated change; verify file intent and content alignment with subsystem scope.\",\n        \"tags\": [\"drift\", \"refact\", \"additive\"],\n        \"kind\": \"domain\"\n      }\n    ]\n  }\n}\n```"
+        }
+      ]
+    }
+  ],
+  "created_at": "2026-06-04T08:47:22.856008700+00:00",
+  "boost_reasoning": false,
+  "checkpoints_enabled": true,
+  "context_tokens_cap": null,
+  "include_project_info": true,
+  "isTitleGenerated": false,
+  "auto_approve_editing_tools": false,
+  "auto_approve_dangerous_commands": false,
+  "buddy_meta": {
+    "is_buddy_chat": true,
+    "buddy_chat_kind": "system",
+    "workflow_id": "buddy_architecture_drift_watcher"
+  },
+  "root_chat_id": "buddy-buddy_architecture_drift_watcher-b7ed3cec-8f57-4fdb-a6d1-b15107c098b6",
+  "updated_at": "2026-06-04T08:47:22.857321100+00:00"
+}

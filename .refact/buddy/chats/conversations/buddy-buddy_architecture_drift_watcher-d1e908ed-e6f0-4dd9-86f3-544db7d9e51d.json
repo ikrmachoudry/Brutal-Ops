@@ -1,0 +1,51 @@
+{
+  "id": "buddy-buddy_architecture_drift_watcher-d1e908ed-e6f0-4dd9-86f3-544db7d9e51d",
+  "title": "Architecture Drift Watcher",
+  "model": "claude_code/claude-haiku-4-5-20251001",
+  "mode": "buddy",
+  "tool_use": "none",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are Buddy running an autonomous background review for the current project.\nWrite a concise report grounded only in the provided prompt and evidence.\nDo not invent files, commands, errors, dependencies, risks, or user preferences.\nDo not reveal secrets or raw credentials; if evidence contains sensitive values, refer to them only as redacted secrets.\nIf evidence is insufficient, say so and list what would be needed.\nUse exactly these sections:\n- Summary\n- Evidence\n- Risk or opportunity\n- Suggested next steps\n- Artifacts\nIn Artifacts, include a fenced JSON object with any durable outputs that should leave the chat. Use this shape and omit empty arrays: {\"artifacts\":{\"memories_to_add\":[{\"title\":\"...\",\"content\":\"...\",\"tags\":[\"...\"],\"kind\":\"domain\"}],\"insights\":[{\"title\":\"...\",\"content\":\"...\"}],\"jokes\":[\"...\"],\"memory_paths_to_review\":[\"...\"],\"memory_paths_to_archive\":[\"...\"]}}.\nKeep the report short, practical, and evidence-only.\n"
+    },
+    {
+      "role": "user",
+      "content": "Workflow: buddy_architecture_drift_watcher\nTitle: Architecture Drift Watcher\nSignal hash: b20feb0e80a8cfcd69357fc7b3e9d16cc990aae07fcd50235b01a193770b370d\nPriority: normal\n\nTask:\nReview the local architecture drift signal. Summarize subsystem concentration or cross-cutting risk, and propose lightweight guardrails. Use only path groups and diff stats.\n\nEvidence:\nArchitecture drift signal:\n- changed_file_count: 5\n- additions: 2839\n- deletions: 0\n- path_groups:\n  - .refact: 5 files\n"
+    },
+    {
+      "message_id": "18bba026-9f01-48da-a9d7-34228ecf4c4b",
+      "role": "assistant",
+      "content": "# Architecture Drift Watcher Report\n\n## Summary\nA localized drift signal detected 5 file changes in the `.refact` path group with 2,839 additions and no deletions. The concentration in a single directory suggests either a new feature branch, configuration expansion, or tooling setup rather than systemic architectural drift.\n\n## Evidence\n- **Changed files:** 5 (all in `.refact`)\n- **Net additions:** 2,839 lines\n- **Deletions:** 0\n- **Path concentration:** 100% in `.refact` directory\n- **Signal hash:** b20feb0e80a8cfcd69357fc7b3e9d16cc990aae07fcd50235b01a193770b370d\n\n## Risk or opportunity\n**Low immediate risk.** Single-directory concentration limits cross-cutting impact. However, the absence of deletions and high addition volume warrants confirmation that:\n- Changes are scoped to tooling/config (not core subsystems)\n- No unintended duplication of logic across boundaries\n- `.refact` is an expected, isolated concern\n\n## Suggested next steps\n1. **Verify scope:** Confirm `.refact` is a designated tooling or configuration directory, not a core subsystem\n2. **Spot-check additions:** Sample 1–2 files to ensure no architectural patterns are leaking into this space\n3. **Set lightweight guardrail:** If `.refact` is stable, consider a path-based rule to flag future changes >500 lines in this directory\n\n## Artifacts\n```json\n{\n  \"artifacts\": {\n    \"memories_to_add\": [\n      {\n        \"title\": \"Architecture Drift: .refact concentration (b20feb0e)\",\n        \"content\": \"Signal detected 5 files, 2,839 additions in .refact only. No deletions. Localized, low cross-cutting risk. Recommend confirming .refact is isolated tooling/config space.\",\n        \"tags\": [\"architecture\", \"drift\", \"path-group\"],\n        \"kind\": \"domain\"\n      }\n    ],\n    \"insights\": [\n      {\n        \"title\": \"Single-directory concentration pattern\",\n        \"content\": \"100% of changes in .refact suggests feature branch or tooling setup. Verify this is expected and isolated before dismissing.\"\n      }\n    ]\n  }\n}\n```",
+      "finish_reason": "end_turn",
+      "usage": {
+        "prompt_tokens": 408,
+        "completion_tokens": 547,
+        "total_tokens": 955,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0
+      },
+      "_anthropic_text_blocks": [
+        {
+          "index": 0,
+          "text": "# Architecture Drift Watcher Report\n\n## Summary\nA localized drift signal detected 5 file changes in the `.refact` path group with 2,839 additions and no deletions. The concentration in a single directory suggests either a new feature branch, configuration expansion, or tooling setup rather than systemic architectural drift.\n\n## Evidence\n- **Changed files:** 5 (all in `.refact`)\n- **Net additions:** 2,839 lines\n- **Deletions:** 0\n- **Path concentration:** 100% in `.refact` directory\n- **Signal hash:** b20feb0e80a8cfcd69357fc7b3e9d16cc990aae07fcd50235b01a193770b370d\n\n## Risk or opportunity\n**Low immediate risk.** Single-directory concentration limits cross-cutting impact. However, the absence of deletions and high addition volume warrants confirmation that:\n- Changes are scoped to tooling/config (not core subsystems)\n- No unintended duplication of logic across boundaries\n- `.refact` is an expected, isolated concern\n\n## Suggested next steps\n1. **Verify scope:** Confirm `.refact` is a designated tooling or configuration directory, not a core subsystem\n2. **Spot-check additions:** Sample 1–2 files to ensure no architectural patterns are leaking into this space\n3. **Set lightweight guardrail:** If `.refact` is stable, consider a path-based rule to flag future changes >500 lines in this directory\n\n## Artifacts\n```json\n{\n  \"artifacts\": {\n    \"memories_to_add\": [\n      {\n        \"title\": \"Architecture Drift: .refact concentration (b20feb0e)\",\n        \"content\": \"Signal detected 5 files, 2,839 additions in .refact only. No deletions. Localized, low cross-cutting risk. Recommend confirming .refact is isolated tooling/config space.\",\n        \"tags\": [\"architecture\", \"drift\", \"path-group\"],\n        \"kind\": \"domain\"\n      }\n    ],\n    \"insights\": [\n      {\n        \"title\": \"Single-directory concentration pattern\",\n        \"content\": \"100% of changes in .refact suggests feature branch or tooling setup. Verify this is expected and isolated before dismissing.\"\n      }\n    ]\n  }\n}\n```"
+        }
+      ]
+    }
+  ],
+  "created_at": "2026-06-02T23:13:07.680298200+00:00",
+  "boost_reasoning": false,
+  "checkpoints_enabled": true,
+  "context_tokens_cap": null,
+  "include_project_info": true,
+  "isTitleGenerated": false,
+  "auto_approve_editing_tools": false,
+  "auto_approve_dangerous_commands": false,
+  "buddy_meta": {
+    "is_buddy_chat": true,
+    "buddy_chat_kind": "system",
+    "workflow_id": "buddy_architecture_drift_watcher"
+  },
+  "root_chat_id": "buddy-buddy_architecture_drift_watcher-d1e908ed-e6f0-4dd9-86f3-544db7d9e51d",
+  "updated_at": "2026-06-02T23:13:07.681157500+00:00"
+}

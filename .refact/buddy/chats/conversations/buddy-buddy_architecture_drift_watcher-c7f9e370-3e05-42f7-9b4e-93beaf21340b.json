@@ -1,0 +1,51 @@
+{
+  "id": "buddy-buddy_architecture_drift_watcher-c7f9e370-3e05-42f7-9b4e-93beaf21340b",
+  "title": "Architecture Drift Watcher",
+  "model": "claude_code/claude-haiku-4-5-20251001",
+  "mode": "buddy",
+  "tool_use": "none",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are Buddy running an autonomous background review for the current project.\nWrite a concise report grounded only in the provided prompt and evidence.\nDo not invent files, commands, errors, dependencies, risks, or user preferences.\nDo not reveal secrets or raw credentials; if evidence contains sensitive values, refer to them only as redacted secrets.\nIf evidence is insufficient, say so and list what would be needed.\nUse exactly these sections:\n- Summary\n- Evidence\n- Risk or opportunity\n- Suggested next steps\n- Artifacts\nIn Artifacts, include a fenced JSON object with any durable outputs that should leave the chat. Use this shape and omit empty arrays: {\"artifacts\":{\"memories_to_add\":[{\"title\":\"...\",\"content\":\"...\",\"tags\":[\"...\"],\"kind\":\"domain\"}],\"insights\":[{\"title\":\"...\",\"content\":\"...\"}],\"jokes\":[\"...\"],\"memory_paths_to_review\":[\"...\"],\"memory_paths_to_archive\":[\"...\"]}}.\nKeep the report short, practical, and evidence-only.\n"
+    },
+    {
+      "role": "user",
+      "content": "Workflow: buddy_architecture_drift_watcher\nTitle: Architecture Drift Watcher\nSignal hash: 760dea2f02d3ded056cad591e2d15784bdce2410943a78e4d2bf7c74f433c834\nPriority: normal\n\nTask:\nReview the local architecture drift signal. Summarize subsystem concentration or cross-cutting risk, and propose lightweight guardrails. Use only path groups and diff stats.\n\nEvidence:\nArchitecture drift signal:\n- changed_file_count: 0\n- additions: 3011\n- deletions: 0\n- path_groups:\n"
+    },
+    {
+      "message_id": "cbe16683-1535-4bf0-9bca-705d1fc75b3f",
+      "role": "assistant",
+      "content": "# Architecture Drift Watcher Report\n\n## Summary\nThe drift signal shows **3,011 net additions with zero deletions and no changed files**, indicating new code introduction rather than refactoring. However, **no path groups are provided**, making subsystem concentration analysis impossible. This is either a new project initialization or incomplete signal data.\n\n## Evidence\n- **Changed files:** 0\n- **Net additions:** 3,011 lines\n- **Net deletions:** 0 lines\n- **Path groups:** Empty (no subsystem breakdown available)\n\n## Risk or Opportunity\n**Risk:** Without path group data, we cannot identify:\n- Which subsystems received the additions\n- Whether concentration is occurring in one area\n- Cross-cutting concerns or layering violations\n\n**Opportunity:** If this is a greenfield or major feature branch, establishing path group conventions now prevents future drift.\n\n## Suggested Next Steps\n1. **Verify signal completeness:** Confirm whether path groups were omitted or genuinely absent from the source diff\n2. **Define path groups:** Establish subsystem boundaries (e.g., `src/api/*`, `src/domain/*`, `src/infra/*`) if not already in place\n3. **Re-run analysis:** Regenerate the drift signal with path group metadata to enable concentration detection\n4. **Lightweight guardrail:** Add a pre-commit hook or CI check that requires path group classification for diffs >500 lines\n\n## Artifacts\n```json\n{\n  \"artifacts\": {\n    \"insights\": [\n      {\n        \"title\": \"Incomplete Drift Signal\",\n        \"content\": \"Path groups missing from architecture drift analysis. Cannot assess subsystem concentration or cross-cutting risk without file-to-subsystem mapping.\"\n      }\n    ],\n    \"memory_paths_to_review\": [\n      \"architecture/subsystem_boundaries\",\n      \"ci/drift_detection_config\"\n    ]\n  }\n}\n```",
+      "finish_reason": "end_turn",
+      "usage": {
+        "prompt_tokens": 399,
+        "completion_tokens": 438,
+        "total_tokens": 837,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0
+      },
+      "_anthropic_text_blocks": [
+        {
+          "index": 0,
+          "text": "# Architecture Drift Watcher Report\n\n## Summary\nThe drift signal shows **3,011 net additions with zero deletions and no changed files**, indicating new code introduction rather than refactoring. However, **no path groups are provided**, making subsystem concentration analysis impossible. This is either a new project initialization or incomplete signal data.\n\n## Evidence\n- **Changed files:** 0\n- **Net additions:** 3,011 lines\n- **Net deletions:** 0 lines\n- **Path groups:** Empty (no subsystem breakdown available)\n\n## Risk or Opportunity\n**Risk:** Without path group data, we cannot identify:\n- Which subsystems received the additions\n- Whether concentration is occurring in one area\n- Cross-cutting concerns or layering violations\n\n**Opportunity:** If this is a greenfield or major feature branch, establishing path group conventions now prevents future drift.\n\n## Suggested Next Steps\n1. **Verify signal completeness:** Confirm whether path groups were omitted or genuinely absent from the source diff\n2. **Define path groups:** Establish subsystem boundaries (e.g., `src/api/*`, `src/domain/*`, `src/infra/*`) if not already in place\n3. **Re-run analysis:** Regenerate the drift signal with path group metadata to enable concentration detection\n4. **Lightweight guardrail:** Add a pre-commit hook or CI check that requires path group classification for diffs >500 lines\n\n## Artifacts\n```json\n{\n  \"artifacts\": {\n    \"insights\": [\n      {\n        \"title\": \"Incomplete Drift Signal\",\n        \"content\": \"Path groups missing from architecture drift analysis. Cannot assess subsystem concentration or cross-cutting risk without file-to-subsystem mapping.\"\n      }\n    ],\n    \"memory_paths_to_review\": [\n      \"architecture/subsystem_boundaries\",\n      \"ci/drift_detection_config\"\n    ]\n  }\n}\n```"
+        }
+      ]
+    }
+  ],
+  "created_at": "2026-06-04T16:26:28.190074900+00:00",
+  "boost_reasoning": false,
+  "checkpoints_enabled": true,
+  "context_tokens_cap": null,
+  "include_project_info": true,
+  "isTitleGenerated": false,
+  "auto_approve_editing_tools": false,
+  "auto_approve_dangerous_commands": false,
+  "buddy_meta": {
+    "is_buddy_chat": true,
+    "buddy_chat_kind": "system",
+    "workflow_id": "buddy_architecture_drift_watcher"
+  },
+  "root_chat_id": "buddy-buddy_architecture_drift_watcher-c7f9e370-3e05-42f7-9b4e-93beaf21340b",
+  "updated_at": "2026-06-04T16:26:28.190463+00:00"
+}

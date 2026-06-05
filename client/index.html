@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<title>Brutal Ops</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{background:#080810;color:#fff;font-family:'Courier New',monospace;
+  min-height:100vh;display:flex;align-items:center;justify-content:center;overflow-y:auto;}
+body{flex-direction:column;gap:0;padding:20px;}
+/* Scanlines */
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:100;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.07) 2px,rgba(0,0,0,0.07) 4px);}
+
+.logo{font-size:clamp(28px,8vw,64px);font-weight:900;letter-spacing:10px;color:#ff2200;
+  text-shadow:0 0 40px rgba(255,34,0,0.7);margin-bottom:8px;text-align:center;
+  animation:flicker 4s infinite;}
+@keyframes flicker{0%,95%,100%{opacity:1;}96%{opacity:.8;}98%{opacity:.9;}}
+.sub{font-size:10px;letter-spacing:4px;color:#333;margin-bottom:32px;text-align:center;}
+
+.form{display:flex;flex-direction:column;gap:14px;width:min(380px,90vw);}
+.field{display:flex;flex-direction:column;gap:5px;}
+.field label{font-size:9px;letter-spacing:3px;color:#555;}
+.field input{
+  background:#0e0e1a;border:1px solid #1e1e2e;color:#fff;
+  padding:10px 14px;font-family:'Courier New',monospace;font-size:13px;
+  letter-spacing:2px;outline:none;border-radius:2px;
+  transition:border-color .2s;}
+.field input:focus{border-color:#ff2200;}
+.hint{font-size:9px;color:#333;letter-spacing:1px;margin-top:3px;}
+.hint span{color:#ff8800;}
+
+#btnDeploy{
+  margin-top:8px;padding:14px;background:#ff2200;border:none;color:#fff;
+  font-family:'Courier New',monospace;font-size:13px;letter-spacing:4px;
+  cursor:pointer;border-radius:2px;transition:background .2s,box-shadow .2s;
+  min-height:48px;}
+#btnDeploy:hover{background:#ff4422;box-shadow:0 0 20px rgba(255,34,0,0.4);}
+#btnDeploy:active{background:#cc1100;}
+
+.status{font-size:9px;color:#444;letter-spacing:2px;text-align:center;margin-top:6px;min-height:16px;}
+.status.ok{color:#44ff88;}
+.status.err{color:#ff4444;}
+</style>
+</head>
+<body>
+<div class="logo">BRUTAL OPS</div>
+<div class="sub">TACTICAL MULTIPLAYER · ENTER BATTLEFIELD</div>
+
+<div class="form">
+  <div class="field">
+    <label>CALL SIGN</label>
+    <input id="iName" type="text" placeholder="Soldier" maxlength="16" autocomplete="off">
+  </div>
+  <div class="field">
+    <label>SERVER IP</label>
+    <input id="iIP" type="text" placeholder="auto-detect" autocomplete="off">
+    <div class="hint">Leave blank to auto-detect · or enter <span>192.168.1.5</span></div>
+  </div>
+  <div class="field">
+    <label>PORT</label>
+    <input id="iPort" type="text" value="3000" maxlength="5" autocomplete="off">
+  </div>
+  <button id="btnDeploy" onclick="deploy()">⚔ DEPLOY</button>
+  <div class="status" id="status"></div>
+</div>
+
+<script>
+// Auto-fill IP with current page hostname (works for LAN too)
+(function(){
+  var ip=new URLSearchParams(location.search).get('ip')||location.hostname||'localhost';
+  document.getElementById('iIP').value=ip;
+  var port=new URLSearchParams(location.search).get('port')||'3000';
+  document.getElementById('iPort').value=port;
+  var name=new URLSearchParams(location.search).get('name')||'';
+  document.getElementById('iName').value=name;
+})();
+
+function deploy(){
+  var name=(document.getElementById('iName').value||'Soldier').trim().slice(0,16);
+  var ip  =(document.getElementById('iIP').value  ||location.hostname).trim();
+  var port=(document.getElementById('iPort').value||'3000').trim();
+
+  if(!ip||!port){
+    document.getElementById('status').textContent='Fill all fields';
+    document.getElementById('status').className='status err'; return;
+  }
+
+  var status=document.getElementById('status');
+  status.textContent='Connecting...'; status.className='status';
+
+  // Test WebSocket before navigating
+  var testWS;
+  try{
+    testWS=new WebSocket('ws://'+ip+':'+port);
+    testWS.onopen=function(){
+      testWS.close();
+      status.textContent='Connected! Loading...'; status.className='status ok';
+      setTimeout(function(){
+        window.location.href='character.html?name='+encodeURIComponent(name)+
+          '&ip='+encodeURIComponent(ip)+'&port='+encodeURIComponent(port);
+      },300);
+    };
+    testWS.onerror=function(){
+      status.textContent='Cannot reach '+ip+':'+port+' — is server running?';
+      status.className='status err';
+    };
+    setTimeout(function(){
+      if(testWS.readyState===0||testWS.readyState===1)return;
+      status.textContent='Timeout — check IP and firewall';
+      status.className='status err';
+    },4000);
+  }catch(e){
+    status.textContent='Invalid IP or port';
+    status.className='status err';
+  }
+}
+
+// Enter key submits
+document.addEventListener('keydown',function(e){
+  if(e.key==='Enter') deploy();
+});
+</script>
+</body>
+</html>

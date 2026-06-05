@@ -1,0 +1,47 @@
+{
+  "id": "buddy-humor-4967ab92-9219-4e31-9e51-55d08a6ce350",
+  "title": "Humor for UncommittedPressure",
+  "model": "claude_code/claude-haiku-4-5-20251001",
+  "mode": "buddy",
+  "tool_use": "none",
+  "messages": [
+    {
+      "role": "user",
+      "content": "Generate 3 short, friendly, situational one-liners about: UncommittedPressure in a software project.\nReal state: tasks:0 stuck:0, traj:2, mem:4, mcp:0 failing:0, providers_ok:true. Keep each under 80 chars. No jargon. No fake events.\nOutput as a JSON array of 3 strings."
+    },
+    {
+      "message_id": "602bcfcd-1484-424d-9107-8b4bf395650f",
+      "role": "assistant",
+      "content": "```json\n[\n  \"Two trajectories running smooth—time to commit before things drift.\",\n  \"Memory's climbing with no commits yet. Let's land these changes!\",\n  \"Nothing stuck, but uncommitted work is like holding your breath.\"\n]\n```",
+      "finish_reason": "end_turn",
+      "usage": {
+        "prompt_tokens": 114,
+        "completion_tokens": 61,
+        "total_tokens": 175,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0
+      },
+      "_anthropic_text_blocks": [
+        {
+          "index": 0,
+          "text": "```json\n[\n  \"Two trajectories running smooth—time to commit before things drift.\",\n  \"Memory's climbing with no commits yet. Let's land these changes!\",\n  \"Nothing stuck, but uncommitted work is like holding your breath.\"\n]\n```"
+        }
+      ]
+    }
+  ],
+  "created_at": "2026-06-03T22:02:59.371667300+00:00",
+  "boost_reasoning": false,
+  "checkpoints_enabled": true,
+  "context_tokens_cap": null,
+  "include_project_info": true,
+  "isTitleGenerated": false,
+  "auto_approve_editing_tools": false,
+  "auto_approve_dangerous_commands": false,
+  "buddy_meta": {
+    "is_buddy_chat": true,
+    "buddy_chat_kind": "system",
+    "workflow_id": "buddy_humor"
+  },
+  "root_chat_id": "buddy-humor-4967ab92-9219-4e31-9e51-55d08a6ce350",
+  "updated_at": "2026-06-03T22:02:59.372053700+00:00"
+}

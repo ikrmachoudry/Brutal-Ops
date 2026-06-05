@@ -1,0 +1,51 @@
+{
+  "id": "buddy-buddy_architecture_drift_watcher-8c9fcf7a-ac1d-4512-a2cc-26fee2b70e72",
+  "title": "Architecture Drift Watcher",
+  "model": "claude_code/claude-haiku-4-5-20251001",
+  "mode": "buddy",
+  "tool_use": "none",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are Buddy running an autonomous background review for the current project.\nWrite a concise report grounded only in the provided prompt and evidence.\nDo not invent files, commands, errors, dependencies, risks, or user preferences.\nDo not reveal secrets or raw credentials; if evidence contains sensitive values, refer to them only as redacted secrets.\nIf evidence is insufficient, say so and list what would be needed.\nUse exactly these sections:\n- Summary\n- Evidence\n- Risk or opportunity\n- Suggested next steps\n- Artifacts\nIn Artifacts, include a fenced JSON object with any durable outputs that should leave the chat. Use this shape and omit empty arrays: {\"artifacts\":{\"memories_to_add\":[{\"title\":\"...\",\"content\":\"...\",\"tags\":[\"...\"],\"kind\":\"domain\"}],\"insights\":[{\"title\":\"...\",\"content\":\"...\"}],\"jokes\":[\"...\"],\"memory_paths_to_review\":[\"...\"],\"memory_paths_to_archive\":[\"...\"]}}.\nKeep the report short, practical, and evidence-only.\n"
+    },
+    {
+      "role": "user",
+      "content": "Workflow: buddy_architecture_drift_watcher\nTitle: Architecture Drift Watcher\nSignal hash: aa6928367d88514280875e44fd2dc0bceb54f12a320882a255cc2e009564ca16\nPriority: normal\n\nTask:\nReview the local architecture drift signal. Summarize subsystem concentration or cross-cutting risk, and propose lightweight guardrails. Use only path groups and diff stats.\n\nEvidence:\nArchitecture drift signal:\n- changed_file_count: 5\n- additions: 3197\n- deletions: 0\n- path_groups:\n  - .refact: 5 files\n"
+    },
+    {
+      "message_id": "2856accb-524c-4c7b-aea4-9183b9e1b857",
+      "role": "assistant",
+      "content": "# Architecture Drift Watcher Report\n\n## Summary\nA single path group (`.refact/`) accounts for 100% of drift activity: 5 files modified with 3,197 additions and zero deletions. This represents concentrated change in what appears to be a refactoring or configuration directory, with no deletions suggesting additive-only modifications.\n\n## Evidence\n- **Changed files:** 5 (all in `.refact/`)\n- **Additions:** 3,197 lines\n- **Deletions:** 0 lines\n- **Path concentration:** 100% in `.refact/` directory\n- **Change pattern:** Additive only (no removals)\n\n## Risk or Opportunity\n**Low immediate risk** if `.refact/` is a temporary or isolated refactoring workspace. **Moderate concern** if this directory is:\n- Part of the core build or deployment pipeline (risk of unreviewed configuration drift)\n- Accumulating technical debt without corresponding cleanup (deletions = 0 suggests no pruning)\n- Intended to be ephemeral but persisting in version control\n\nThe additive-only pattern suggests incomplete refactoring cycles (no old code removal).\n\n## Suggested Next Steps\n1. **Clarify intent:** Confirm whether `.refact/` is temporary (should be `.gitignore`d) or permanent (should be documented)\n2. **Review file types:** Examine the 5 files to assess whether changes are configuration, code, or metadata\n3. **Establish lightweight guardrail:** Add a pre-commit hook or CI check to flag future `.refact/` changes and require justification\n4. **Plan cleanup:** If refactoring is complete, schedule deletion of obsolete files to restore balance (additions ≠ deletions)\n\n## Artifacts\n```json\n{\n  \"artifacts\": {\n    \"memories_to_add\": [\n      {\n        \"title\": \"Architecture Drift: .refact/ Concentration\",\n        \"content\": \"Signal aa6928367d88514280875e44fd2dc0bceb54f12a320882a255cc2e009564ca16 detected 5 files in .refact/ with 3,197 additions and 0 deletions. Additive-only pattern suggests incomplete refactoring or unvetted configuration drift. Recommend clarifying directory intent and establishing review guardrails.\",\n        \"tags\": [\"architecture\", \"drift\", \"refactoring\", \"guardrails\"],\n        \"kind\": \"domain\"\n      }\n    ],\n    \"insights\": [\n      {\n        \"title\": \"100% Path Concentration Risk\",\n        \"content\": \"All drift isolated to .refact/. If this is temporary, add to .gitignore. If permanent, document purpose and establish change review process.\"\n      }\n    ]\n  }\n}\n```",
+      "finish_reason": "end_turn",
+      "usage": {
+        "prompt_tokens": 403,
+        "completion_tokens": 647,
+        "total_tokens": 1050,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0
+      },
+      "_anthropic_text_blocks": [
+        {
+          "index": 0,
+          "text": "# Architecture Drift Watcher Report\n\n## Summary\nA single path group (`.refact/`) accounts for 100% of drift activity: 5 files modified with 3,197 additions and zero deletions. This represents concentrated change in what appears to be a refactoring or configuration directory, with no deletions suggesting additive-only modifications.\n\n## Evidence\n- **Changed files:** 5 (all in `.refact/`)\n- **Additions:** 3,197 lines\n- **Deletions:** 0 lines\n- **Path concentration:** 100% in `.refact/` directory\n- **Change pattern:** Additive only (no removals)\n\n## Risk or Opportunity\n**Low immediate risk** if `.refact/` is a temporary or isolated refactoring workspace. **Moderate concern** if this directory is:\n- Part of the core build or deployment pipeline (risk of unreviewed configuration drift)\n- Accumulating technical debt without corresponding cleanup (deletions = 0 suggests no pruning)\n- Intended to be ephemeral but persisting in version control\n\nThe additive-only pattern suggests incomplete refactoring cycles (no old code removal).\n\n## Suggested Next Steps\n1. **Clarify intent:** Confirm whether `.refact/` is temporary (should be `.gitignore`d) or permanent (should be documented)\n2. **Review file types:** Examine the 5 files to assess whether changes are configuration, code, or metadata\n3. **Establish lightweight guardrail:** Add a pre-commit hook or CI check to flag future `.refact/` changes and require justification\n4. **Plan cleanup:** If refactoring is complete, schedule deletion of obsolete files to restore balance (additions ≠ deletions)\n\n## Artifacts\n```json\n{\n  \"artifacts\": {\n    \"memories_to_add\": [\n      {\n        \"title\": \"Architecture Drift: .refact/ Concentration\",\n        \"content\": \"Signal aa6928367d88514280875e44fd2dc0bceb54f12a320882a255cc2e009564ca16 detected 5 files in .refact/ with 3,197 additions and 0 deletions. Additive-only pattern suggests incomplete refactoring or unvetted configuration drift. Recommend clarifying directory intent and establishing review guardrails.\",\n        \"tags\": [\"architecture\", \"drift\", \"refactoring\", \"guardrails\"],\n        \"kind\": \"domain\"\n      }\n    ],\n    \"insights\": [\n      {\n        \"title\": \"100% Path Concentration Risk\",\n        \"content\": \"All drift isolated to .refact/. If this is temporary, add to .gitignore. If permanent, document purpose and establish change review process.\"\n      }\n    ]\n  }\n}\n```"
+        }
+      ]
+    }
+  ],
+  "created_at": "2026-06-03T09:22:41.523824700+00:00",
+  "boost_reasoning": false,
+  "checkpoints_enabled": true,
+  "context_tokens_cap": null,
+  "include_project_info": true,
+  "isTitleGenerated": false,
+  "auto_approve_editing_tools": false,
+  "auto_approve_dangerous_commands": false,
+  "buddy_meta": {
+    "is_buddy_chat": true,
+    "buddy_chat_kind": "system",
+    "workflow_id": "buddy_architecture_drift_watcher"
+  },
+  "root_chat_id": "buddy-buddy_architecture_drift_watcher-8c9fcf7a-ac1d-4512-a2cc-26fee2b70e72",
+  "updated_at": "2026-06-03T09:22:41.524555200+00:00"
+}

@@ -1,0 +1,51 @@
+{
+  "id": "buddy-buddy_architecture_drift_watcher-7c63e126-24c7-4dfe-8759-a773901037b8",
+  "title": "Architecture Drift Watcher",
+  "model": "claude_code/claude-haiku-4-5-20251001",
+  "mode": "buddy",
+  "tool_use": "none",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are Buddy running an autonomous background review for the current project.\nWrite a concise report grounded only in the provided prompt and evidence.\nDo not invent files, commands, errors, dependencies, risks, or user preferences.\nDo not reveal secrets or raw credentials; if evidence contains sensitive values, refer to them only as redacted secrets.\nIf evidence is insufficient, say so and list what would be needed.\nUse exactly these sections:\n- Summary\n- Evidence\n- Risk or opportunity\n- Suggested next steps\n- Artifacts\nIn Artifacts, include a fenced JSON object with any durable outputs that should leave the chat. Use this shape and omit empty arrays: {\"artifacts\":{\"memories_to_add\":[{\"title\":\"...\",\"content\":\"...\",\"tags\":[\"...\"],\"kind\":\"domain\"}],\"insights\":[{\"title\":\"...\",\"content\":\"...\"}],\"jokes\":[\"...\"],\"memory_paths_to_review\":[\"...\"],\"memory_paths_to_archive\":[\"...\"]}}.\nKeep the report short, practical, and evidence-only.\n"
+    },
+    {
+      "role": "user",
+      "content": "Workflow: buddy_architecture_drift_watcher\nTitle: Architecture Drift Watcher\nSignal hash: f1abcf204b2d3bef864bb53826b01388e24d584ee72e5de9021f3439918b5204\nPriority: normal\n\nTask:\nReview the local architecture drift signal. Summarize subsystem concentration or cross-cutting risk, and propose lightweight guardrails. Use only path groups and diff stats.\n\nEvidence:\nArchitecture drift signal:\n- changed_file_count: 1\n- additions: 1438\n- deletions: 0\n- path_groups:\n  - .refact: 1 files\n"
+    },
+    {
+      "message_id": "333cde0b-f1c0-4b10-88c6-557abb02d239",
+      "role": "assistant",
+      "content": "# Architecture Drift Watcher Report\n\n## Summary\nA single file in the `.refact` directory was modified with 1,438 lines added and no deletions. This represents a localized change with no evidence of subsystem concentration or cross-cutting architectural risk.\n\n## Evidence\n- **Changed files:** 1 (isolated to `.refact` path group)\n- **Net additions:** 1,438 lines\n- **Net deletions:** 0 lines\n- **Path concentration:** 100% of changes in `.refact` (single path group)\n\n## Risk or opportunity\n**Low risk.** The change is confined to a single directory with no spread across multiple subsystems. The large addition without deletions suggests new content (possibly configuration, documentation, or tooling) rather than refactoring or architectural restructuring. No cross-cutting concerns detected.\n\n## Suggested next steps\n1. Verify the `.refact` directory's purpose and whether 1,438 new lines align with its intended scope.\n2. If `.refact` is auto-generated or tooling-related, confirm it's excluded from architectural review gates.\n3. No immediate guardrails needed; monitor for future multi-subsystem changes.\n\n## Artifacts\n```json\n{\n  \"artifacts\": {\n    \"insights\": [\n      {\n        \"title\": \"Single-directory drift pattern\",\n        \"content\": \"Change isolated to .refact with no cross-subsystem impact. Recommend confirming this path's role in the architecture.\"\n      }\n    ]\n  }\n}\n```",
+      "finish_reason": "end_turn",
+      "usage": {
+        "prompt_tokens": 408,
+        "completion_tokens": 350,
+        "total_tokens": 758,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0
+      },
+      "_anthropic_text_blocks": [
+        {
+          "index": 0,
+          "text": "# Architecture Drift Watcher Report\n\n## Summary\nA single file in the `.refact` directory was modified with 1,438 lines added and no deletions. This represents a localized change with no evidence of subsystem concentration or cross-cutting architectural risk.\n\n## Evidence\n- **Changed files:** 1 (isolated to `.refact` path group)\n- **Net additions:** 1,438 lines\n- **Net deletions:** 0 lines\n- **Path concentration:** 100% of changes in `.refact` (single path group)\n\n## Risk or opportunity\n**Low risk.** The change is confined to a single directory with no spread across multiple subsystems. The large addition without deletions suggests new content (possibly configuration, documentation, or tooling) rather than refactoring or architectural restructuring. No cross-cutting concerns detected.\n\n## Suggested next steps\n1. Verify the `.refact` directory's purpose and whether 1,438 new lines align with its intended scope.\n2. If `.refact` is auto-generated or tooling-related, confirm it's excluded from architectural review gates.\n3. No immediate guardrails needed; monitor for future multi-subsystem changes.\n\n## Artifacts\n```json\n{\n  \"artifacts\": {\n    \"insights\": [\n      {\n        \"title\": \"Single-directory drift pattern\",\n        \"content\": \"Change isolated to .refact with no cross-subsystem impact. Recommend confirming this path's role in the architecture.\"\n      }\n    ]\n  }\n}\n```"
+        }
+      ]
+    }
+  ],
+  "created_at": "2026-06-01T19:27:19.296983500+00:00",
+  "boost_reasoning": false,
+  "checkpoints_enabled": true,
+  "context_tokens_cap": null,
+  "include_project_info": true,
+  "isTitleGenerated": false,
+  "auto_approve_editing_tools": false,
+  "auto_approve_dangerous_commands": false,
+  "buddy_meta": {
+    "is_buddy_chat": true,
+    "buddy_chat_kind": "system",
+    "workflow_id": "buddy_architecture_drift_watcher"
+  },
+  "root_chat_id": "buddy-buddy_architecture_drift_watcher-7c63e126-24c7-4dfe-8759-a773901037b8",
+  "updated_at": "2026-06-01T19:27:19.297696+00:00"
+}
