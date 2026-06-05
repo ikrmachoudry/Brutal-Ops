@@ -8,34 +8,41 @@ const fs        = require('fs');
 const GameState     = require('./core/GameState');
 const MessageRouter = require('./core/MessageRouter');
 
-/* ================================
-   SAFE PATH (works local + Railway)
-================================ */
+/* =========================
+   SAFE CLIENT PATH
+========================= */
 const CLIENT_DIR = path.join(__dirname, '..', 'client');
 
-/* ================================
-   🔥 CRITICAL FIX FOR RAILWAY
-   Railway ONLY uses process.env.PORT
-================================ */
+/* =========================
+   PORT FIX (RAILWAY SAFE)
+========================= */
 const PORT = process.env.PORT || 8181;
 
-/* ================================
-   MIME TYPES (UNCHANGED)
-================================ */
+/* =========================
+   MIME TYPES
+========================= */
 const MIME = {
-  '.html':'text/html','.js':'application/javascript',
-  '.css':'text/css','.png':'image/png','.jpg':'image/jpeg',
-  '.mp3':'audio/mpeg','.mpeg':'audio/mpeg','.mp4':'audio/mpeg',
-  '.wav':'audio/wav','.ogg':'audio/ogg','.json':'application/json',
-  '.ico':'image/x-icon','.svg':'image/svg+xml',
+  '.html':'text/html',
+  '.js':'application/javascript',
+  '.css':'text/css',
+  '.png':'image/png',
+  '.jpg':'image/jpeg',
+  '.mp3':'audio/mpeg',
+  '.mpeg':'audio/mpeg',
+  '.mp4':'audio/mpeg',
+  '.wav':'audio/wav',
+  '.ogg':'audio/ogg',
+  '.json':'application/json',
+  '.ico':'image/x-icon',
+  '.svg':'image/svg+xml',
 };
 
-/* ================================
-   HTTP SERVER (UNCHANGED LOGIC)
-================================ */
+/* =========================
+   HTTP SERVER (STATIC FILES)
+========================= */
 const httpServer = http.createServer((req, res) => {
 
-  res.setHeader('Access-Control-Allow-Origin','*');
+  res.setHeader('Access-Control-Allow-Origin', '*');
 
   if (req.method === 'OPTIONS') {
     res.writeHead(204);
@@ -55,6 +62,7 @@ const httpServer = http.createServer((req, res) => {
 
   const filePath = path.join(CLIENT_DIR, decoded);
 
+  // security check
   if (!filePath.startsWith(CLIENT_DIR)) {
     res.writeHead(403);
     res.end();
@@ -71,7 +79,7 @@ const httpServer = http.createServer((req, res) => {
           res.end('Not found');
           return;
         }
-        res.writeHead(200, {'Content-Type':'text/html'});
+        res.writeHead(200, { 'Content-Type': 'text/html' });
         res.end(data2);
       });
       return;
@@ -85,10 +93,9 @@ const httpServer = http.createServer((req, res) => {
   });
 });
 
-/* ================================
-   🔥 IMPORTANT FIX: SINGLE PORT ONLY
-   (HTTP + WebSocket SAME SERVER)
-================================ */
+/* =========================
+   START SERVER (IMPORTANT)
+========================= */
 httpServer.listen(PORT, '0.0.0.0', () => {
   console.log('\n╔══════════════════════════════════════╗');
   console.log('║        BRUTAL OPS SERVER READY       ║');
@@ -97,17 +104,21 @@ httpServer.listen(PORT, '0.0.0.0', () => {
   console.log('╚══════════════════════════════════════╝\n');
 });
 
-/* ================================
-   GAME ENGINE (UNCHANGED LOGIC)
-================================ */
-const gs     = new GameState();
-const wss    = new WebSocket.Server({ server: httpServer });
+/* =========================
+   GAME STATE
+========================= */
+const gs  = new GameState();
+
+/* =========================
+   WEBSOCKET (FIXED FOR RAILWAY)
+========================= */
+const wss = new WebSocket.Server({ server: httpServer });
 const router = new MessageRouter(gs, wss);
 
-/* ================================
-   CONNECTION HANDLER (UNCHANGED)
-================================ */
-wss.on('connection', (ws, req) => {
+/* =========================
+   CONNECTION HANDLER
+========================= */
+wss.on('connection', (ws) => {
 
   let playerId = null;
 
@@ -115,13 +126,16 @@ wss.on('connection', (ws, req) => {
     try {
       const msg = JSON.parse(raw);
 
+      // JOIN FIRST
       if (!playerId) {
         if (msg.type === 'JOIN') {
           playerId = gs.addPlayer(ws);
+
           if (!playerId) {
             ws.close();
             return;
           }
+
           console.log('[JOIN] ' + playerId + ' name=' + msg.name);
           router.handle(playerId, msg);
         }
@@ -135,15 +149,15 @@ wss.on('connection', (ws, req) => {
 
   ws.on('close', () => {
     if (playerId)
-      console.log('[STAY] ' + playerId + ' disconnected — stays in game forever');
+      console.log('[DISCONNECT] ' + playerId);
   });
 
   ws.on('error', () => {});
 });
 
-/* ================================
-   WORLD SYNC LOOP (UNCHANGED)
-================================ */
+/* =========================
+   WORLD STATE LOOP
+========================= */
 setInterval(() => {
   if (gs.getPlayerCount() === 0) return;
 
